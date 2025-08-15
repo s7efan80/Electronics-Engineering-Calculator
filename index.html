@@ -1,0 +1,3144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电子工程计算工具 V3.0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50, #1a2a6c);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        /* 主标签样式 */
+        .main-tabs-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 5px;
+            width: fit-content;
+            max-width: 100%;
+        }
+        
+        .main-tab {
+            padding: 12px 30px;
+            margin: 0 5px;
+            border-radius: 50px;
+            cursor: pointer;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        .main-tab.active {
+            background: rgba(255, 255, 255, 0.95);
+            color: #1a2a6c;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 子标签样式 */
+        .sub-tabs-container {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            padding: 5px;
+            width: 90%;
+            max-width: 100%;
+        }
+        
+        .sub-tab {
+            padding: 10px 20px;
+            margin: 0 3px;
+            border-radius: 30px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+        
+        .sub-tab.active {
+            background: rgba(255, 255, 255, 0.95);
+            color: #1a2a6c;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .converter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .converter-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .converter-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        .icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+            font-size: 1.4rem;
+        }
+        
+        .voltage .icon {
+            background: linear-gradient(135deg, #3498db, #1a2a6c);
+        }
+        
+        .power .icon {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .ratio .icon {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+        
+        .field .icon {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+        
+        .quantize .icon {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+        }
+        
+        .positioning .icon {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+        
+        .card-title {
+            font-size: 1.6rem;
+            color: #1a2a6c;
+            font-weight: 600;
+        }
+        
+        .power .card-title {
+            color: #e74c3c;
+        }
+        
+        .ratio .card-title {
+            color: #27ae60;
+        }
+        
+        .field .card-title {
+            color: #9b59b6;
+        }
+        
+        .quantize .card-title {
+            color: #e67e22;
+        }
+        
+        .positioning .card-title {
+            color: #f39c12;
+        }
+        
+        .card-description {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #444;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #f9f9f9;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .result-box {
+            background: #f0f7ff;
+            border: 1px solid #cce5ff;
+            border-radius: 8px;
+            padding: 18px;
+            margin-top: 15px;
+            font-size: 1.2rem;
+            text-align: center;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a2a6c;
+            font-weight: 600;
+        }
+        
+        .voltage .result-box {
+            background: #e3f2fd;
+            border-color: #bbdefb;
+        }
+        
+        .power .result-box {
+            background: #ffebee;
+            border-color: #ffcdd2;
+            color: #e74c3c;
+        }
+        
+        .ratio .result-box {
+            background: #e8f5e9;
+            border-color: #c8e6c9;
+            color: #27ae60;
+        }
+        
+        .field .result-box {
+            background: #f3e5f5;
+            border-color: #e1bee7;
+            color: #9b59b6;
+        }
+        
+        .quantize .result-box {
+            background: #fff3e0;
+            border-color: #ffe0b2;
+            color: #e67e22;
+        }
+        
+        .positioning .result-box {
+            background: #fef9e7;
+            border-color: #fef5e7;
+            color: #d35400;
+        }
+        
+        .formula-box {
+            display: none !important;
+        }
+        
+        .voltage .formula-box {
+            border-left-color: #3498db;
+        }
+        
+        .power .formula-box {
+            border-left-color: #e74c3c;
+        }
+        
+        .ratio .formula-box {
+            border-left-color: #27ae60;
+        }
+        
+        .field .formula-box {
+            border-left-color: #9b59b6;
+        }
+        
+        .quantize .formula-box {
+            border-left-color: #e67e22;
+        }
+        
+        .positioning .formula-box {
+            border-left-color: #f39c12;
+        }
+        
+        .formula-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a2a6c;
+        }
+        
+        .voltage .formula-title {
+            color: #1a2a6c;
+        }
+        
+        .power .formula-title {
+            color: #e74c3c;
+        }
+        
+        .ratio .formula-title {
+            color: #27ae60;
+        }
+        
+        .field .formula-title {
+            color: #9b59b6;
+        }
+        
+        .quantize .formula-title {
+            color: #e67e22;
+        }
+        
+        .positioning .formula-title {
+            color: #f39c12;
+        }
+        
+        footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            margin-top: auto;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+        
+        @media (max-width: 768px) {
+            .converter-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .main-tab {
+                padding: 10px 15px;
+                font-size: 1rem;
+            }
+            
+            .sub-tab {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+        }
+        
+        .note {
+            background: #fff8e6;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #8a6d3b;
+            border-left: 3px solid #ffc107;
+        }
+        
+        .level-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .level-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .level-value {
+            font-weight: bold;
+            color: #e67e22;
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
+        
+        .input-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+        
+        .input-column {
+            flex: 1;
+            min-width: 200px;
+            padding: 0 10px;
+            margin-bottom: 15px;
+        }
+        
+        .visualization {
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            margin: 15px 0;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+        
+        .quant-bar {
+            position: absolute;
+            height: 100%;
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+            width: 0;
+            transition: width 0.5s ease;
+        }
+        
+        .converter-subsection {
+            display: none;
+        }
+        
+        .converter-subsection.active {
+            display: block;
+        }
+        
+        /* 高亮动画样式 */
+        .highlight {
+            filter: drop-shadow(0 0 8px #ffeb3b) brightness(1.3);
+            stroke: #ffeb3b !important;
+            stroke-width: 5 !important;
+            transition: filter 0.2s, stroke 0.2s;
+        }
+        /* Tooltip浮层样式 */
+        .custom-tooltip {
+            position: fixed;
+            z-index: 9999;
+            background: rgba(40,40,40,0.95);
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            pointer-events: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+            white-space: pre-line;
+            display: none;
+        }
+        .error {
+            border: 2px solid #e74c3c !important;
+            background: #fff6f6 !important;
+        }
+        .svg-error {
+            filter: drop-shadow(0 0 10px #e74c3c) brightness(1.2) !important;
+            stroke: #e74c3c !important;
+            stroke-width: 5 !important;
+            transition: filter 0.2s, stroke 0.2s;
+        }
+        .input-error-tip {
+            color: #e74c3c;
+            font-size: 0.92rem;
+            margin-top: 2px;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-calculator"></i> 电子工程计算工具 V3.0</h1>
+            <p class="subtitle">集成单位换算与定位计算功能，适用于电子工程、通信和信号处理领域</p>
+        </header>
+        
+        <!-- 主标签导航 -->
+        <div class="main-tabs-container">
+            <div class="main-tab active" data-tab="unit">单位换算</div>
+            <div class="main-tab" data-tab="position">定位计算</div>
+        </div>
+        
+        <!-- 单位换算子标签 -->
+        <div class="sub-tabs-container" id="unitSubTabs">
+            <div class="sub-tab active" data-subtab="voltage">电压转换</div>
+            <div class="sub-tab" data-subtab="power">功率转换</div>
+            <div class="sub-tab" data-subtab="ratio">倍数转换</div>
+            <div class="sub-tab" data-subtab="field">场强转换</div>
+            <div class="sub-tab" data-subtab="quantize">量化转换</div>
+        </div>
+        
+        <!-- 单位换算内容区域 -->
+        <div class="section unit-section active">
+            <!-- 电压转换 -->
+            <div class="converter-subsection voltage-subsection active">
+                <div class="converter-grid">
+                    <div class="converter-card voltage">
+                        <div class="card-header">
+                            <div class="icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="card-title">电压单位转换</div>
+                        </div>
+                        <p class="card-description">在dB、dBuV、dBmV、uV、mV、V之间进行转换</p>
+                        
+                        <div class="input-group">
+                            <label for="voltageInput">输入值:</label>
+                            <input type="number" id="voltageInput" placeholder="输入数值..." value="40">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="voltageFrom">从:</label>
+                            <select id="voltageFrom">
+                                <option value="dB">dB</option>
+                                <option value="dBuV">dBuV</option>
+                                <option value="dBmV">dBmV</option>
+                                <option value="uV">uV</option>
+                                <option value="mV">mV</option>
+                                <option value="V">V</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="voltageTo">转换为:</label>
+                            <select id="voltageTo">
+                                <option value="dB">dB</option>
+                                <option value="dBuV">dBuV</option>
+                                <option value="dBmV">dBmV</option>
+                                <option value="uV">uV</option>
+                                <option value="mV">mV</option>
+                                <option value="V">V</option>
+                            </select>
+                        </div>
+                        
+                        <div class="result-box" id="voltageResult">
+                            结果将显示在这里
+                        </div>
+                        
+                        <div class="formula-box">
+                            <div class="formula-title">转换公式:</div>
+                            <div>dBuV = dB</div>
+                            <div>dBmV = dB - 60</div>
+                            <div>uV = 10^(dB/20)</div>
+                            <div>mV = 10^((dB-60)/20)</div>
+                            <div>V = 10^((dB-120)/20)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 功率转换 -->
+            <div class="converter-subsection power-subsection">
+                <div class="converter-grid">
+                    <div class="converter-card power">
+                        <div class="card-header">
+                            <div class="icon">
+                                <i class="fas fa-fire"></i>
+                            </div>
+                            <div class="card-title">功率单位转换</div>
+                        </div>
+                        <p class="card-description">在mW、dBm、mV、V之间进行转换</p>
+                        
+                        <div class="input-group">
+                            <label for="powerInput">输入值:</label>
+                            <input type="number" id="powerInput" placeholder="输入数值..." value="1">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="powerFrom">从:</label>
+                            <select id="powerFrom">
+                                <option value="mW">mW</option>
+                                <option value="dBm">dBm</option>
+                                <option value="mV">mV</option>
+                                <option value="V">V</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="powerTo">转换为:</label>
+                            <select id="powerTo">
+                                <option value="dBm">dBm</option>
+                                <option value="mW">mW</option>
+                                <option value="mV">mV</option>
+                                <option value="V">V</option>
+                            </select>
+                        </div>
+                        
+                        <div class="result-box" id="powerResult">
+                            结果将显示在这里
+                        </div>
+                        
+                        <div class="formula-box">
+                            <div class="formula-title">转换公式:</div>
+                            <div>dBm = 10 * log10(mW)</div>
+                            <div>mV = √(mW / 1000 * 50) * 1000</div>
+                            <div>V = √(mW / 1000 * 50)</div>
+                        </div>
+                        
+                        <div class="note">
+                            <i class="fas fa-info-circle"></i> 注意：功率转换基于50Ω阻抗系统
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 倍数转换 -->
+            <div class="converter-subsection ratio-subsection">
+                <div class="converter-grid">
+                    <div class="converter-card ratio">
+                        <div class="card-header">
+                            <div class="icon">
+                                <i class="fas fa-sort-amount-up"></i>
+                            </div>
+                            <div class="card-title">倍数与dB转换</div>
+                        </div>
+                        <p class="card-description">在数值倍数和分贝(dB)之间进行转换</p>
+                        
+                        <div class="input-group">
+                            <label for="ratioInput">输入值:</label>
+                            <input type="number" id="ratioInput" placeholder="输入数值..." value="100">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="ratioFrom">从:</label>
+                            <select id="ratioFrom">
+                                <option value="ratio">倍数</option>
+                                <option value="dB">dB</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="ratioTo">转换为:</label>
+                            <select id="ratioTo">
+                                <option value="dB">dB</option>
+                                <option value="ratio">倍数</option>
+                            </select>
+                        </div>
+                        
+                        <div class="result-box" id="ratioResult">
+                            结果将显示在这里
+                        </div>
+                        
+                        <div class="formula-box">
+                            <div class="formula-title">转换公式:</div>
+                            <div>dB = 20 * log10(倍数)</div>
+                            <div>倍数 = 10^(dB/20)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 场强转换 -->
+            <div class="converter-subsection field-subsection">
+                <div class="converter-grid">
+                    <div class="converter-card field">
+                        <div class="card-header">
+                            <div class="icon">
+                                <i class="fas fa-wave-square"></i>
+                            </div>
+                            <div class="card-title">场强单位转换</div>
+                        </div>
+                        <p class="card-description">在V/m（伏特每米）和dBV/m（分贝伏特每米）之间进行转换</p>
+                        
+                        <div class="input-group">
+                            <label for="fieldInput">输入值:</label>
+                            <input type="number" id="fieldInput" placeholder="输入数值..." value="7.6">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="fieldFrom">从:</label>
+                            <select id="fieldFrom">
+                                <option value="V/m">V/m</option>
+                                <option value="dBV/m">dBV/m</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="fieldTo">转换为:</label>
+                            <select id="fieldTo">
+                                <option value="dBV/m">dBV/m</option>
+                                <option value="V/m">V/m</option>
+                            </select>
+                        </div>
+                        
+                        <div class="result-box" id="fieldResult">
+                            结果将显示在这里
+                        </div>
+                        
+                        <div class="formula-box">
+                            <div class="formula-title">转换公式:</div>
+                            <div>dBV/m = 20 * log10(V/m)</div>
+                            <div>V/m = 10^(dBV/m / 20)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 量化转换 -->
+            <div class="converter-subsection quantize-subsection">
+                <div class="converter-grid">
+                    <div class="converter-card quantize">
+                        <div class="card-header">
+                            <div class="icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="card-title">量化幅值转换</div>
+                        </div>
+                        <p class="card-description">根据ADC位数和输入范围计算实际幅值</p>
+                        
+                        <div class="input-group">
+                            <label for="adcBits">ADC位数 (N):</label>
+                            <input type="number" id="adcBits" placeholder="输入位数..." min="1" max="32" value="8">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="minRange">输入范围最小值:</label>
+                            <input type="number" id="minRange" placeholder="输入最小值..." value="-80">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="maxRange">输入范围最大值:</label>
+                            <input type="number" id="maxRange" placeholder="输入最大值..." value="0">
+                        </div>
+                        
+                        <div class="level-display">
+                            <div class="level-item">
+                                <div>量化级数</div>
+                                <div class="level-value" id="quantLevels">256</div>
+                            </div>
+                            <div class="level-item">
+                                <div>量化范围</div>
+                                <div class="level-value" id="quantRange">0 ~ 255</div>
+                            </div>
+                        </div>
+                        
+                        <div class="visualization">
+                            <div class="quant-bar" id="quantBar"></div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="quantValue">量化值 (X):</label>
+                            <input type="number" id="quantValue" placeholder="输入量化值..." min="0" max="255" value="40">
+                        </div>
+                        
+                        <div class="result-box" id="quantResult">
+                            实际幅值: -75.3125
+                        </div>
+                        
+                        <div class="formula-box">
+                            <div class="formula-title">转换公式:</div>
+                            <div>量化级数 = 2<sup>N</sup></div>
+                            <div>量化范围 = 0 ~ (2<sup>N</sup> - 1)</div>
+                            <div>幅值 = min + (max - min) / (2<sup>N</sup> - 1) * X</div>
+                        </div>
+                        
+                        <div class="note">
+                            <i class="fas fa-info-circle"></i> 注意：此转换适用于线性ADC转换器
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 定位计算子标签 -->
+        <div class="sub-tabs-container" id="positionSubTabs" style="display: none;">
+            <div class="sub-tab active" data-subtab="uhf">特高频定位</div>
+            <div class="sub-tab" data-subtab="ultra">超声波定位</div>
+            <div class="sub-tab" data-subtab="tev">地电压定位</div>
+            <div class="sub-tab" data-subtab="hf">高频反射</div>
+            <div class="sub-tab" data-subtab="ae">声电联合</div>
+        </div>
+        
+        <!-- 定位计算内容区域 -->
+        <div class="section position-section">
+            <!-- 特高频定位 -->
+            <div class="converter-subsection uhf-subsection active">
+                <div class="converter-grid">
+                    <div class="converter-card positioning">
+                        <div class="card-header">
+                            <div class="icon">
+                                <i class="fas fa-satellite"></i>
+                            </div>
+                            <div class="card-title">双特高频定位</div>
+                        </div>
+                        <p class="card-description">计算信号源位置，基于电缆长度、传播速度和时差</p>
+                        
+                        <div class="input-row">
+                            <div class="input-column">
+                                <label for="uhfL">传感器距离 L (m):</label>
+                                <input type="number" id="uhfL" placeholder="输入距离..." value="20">
+                            </div>
+                            
+                            <div class="input-column">
+                                <label for="uhfS1">传感器A电缆长度 S1 (m)<span style='color:#e67e22;font-size:0.9em;'></span>:</label>
+                                <input type="number" id="uhfS1" placeholder="输入长度..." value="25.5">
+                            </div>
+                            
+                            <div class="input-column">
+                                <label for="uhfS2">传感器B电缆长度 S2 (m)<span style='color:#e67e22;font-size:0.9em;'></span>:</label>
+                                <input type="number" id="uhfS2" placeholder="输入长度..." value="10">
+                            </div>
+                        </div>
+                        
+                        <div class="input-row">
+                            <div class="input-column">
+                                <label for="uhfV">电缆传播速度 V (m/ns):</label>
+                                <input type="number" id="uhfV" placeholder="输入速度..." value="0.24" step="0.01">
+                            </div>
+                            
+                            <div class="input-column">
+                                <label for="uhfC">传播速度 C (m/ns):</label>
+                                <input type="number" id="uhfC" placeholder="输入速度..." value="0.3" step="0.01">
+                            </div>
+                            
+                            <div class="input-column">
+                                <label for="uhfT">时差 T (ns):</label>
+                                <input type="number" id="uhfT" placeholder="输入时差..." value="2">
+                            </div>
+                        </div>
+                        
+                        <div class="input-row">
+                            <div class="input-column">
+                                <label for="uhfTrigger">先触发传感器:</label>
+                                <select id="uhfTrigger">
+                                    <option value="B">B</option>
+                                    <option value="A">A</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="result-box" id="uhfResult">
+                            结果将显示在这里
+                        </div>
+                        
+                        <!-- SVG示意图区域 -->
+                        <div class="visual-diagram" id="uhfDiagram" style="margin:20px 0; width:100%; max-width:600px;"></div>
+                        <!-- 图例 -->
+                        <div id="uhfLegend" style="display:flex;gap:18px;align-items:center;justify-content:center;margin-bottom:10px;font-size:0.98rem;">
+                            <span style="display:flex;align-items:center;"><span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#6dd5fa,#1a2a6c);margin-right:6px;"></span>A点</span>
+                            <span style="display:flex;align-items:center;"><span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#fbc2eb,#e67e22);margin-right:6px;"></span>B点</span>
+                            <span style="display:flex;align-items:center;"><span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#b2ff59,#27ae60);margin-right:6px;"></span>信号源S</span>
+                            <span style="display:inline-block;width:40px;height:6px;background:#888;border-radius:3px;margin-left:8px;margin-right:4px;"></span>距离L
+                        </div>
+                        <!-- 导出图片按钮 -->
+                        <div style="text-align:center;margin-bottom:10px;">
+                            <button id="uhfExportBtn" style="padding:7px 22px;font-size:1rem;border-radius:6px;background:#3498db;color:#fff;border:none;cursor:pointer;box-shadow:0 2px 8px rgba(52,152,219,0.08);transition:background 0.2s;">导出图片</button>
+                        </div>
+                        <!-- 参数组保存与切换 -->
+                        <div style="display:flex;justify-content:center;align-items:center;gap:10px;margin-bottom:10px;">
+                            <button id="uhfSaveGroupBtn" style="padding:6px 16px;font-size:0.98rem;border-radius:6px;background:#27ae60;color:#fff;border:none;cursor:pointer;">保存参数组</button>
+                            <select id="uhfGroupSelect" style="padding:6px 10px;font-size:0.98rem;border-radius:6px;min-width:120px;"></select>
+                            <button id="uhfDeleteGroupBtn" style="padding:6px 10px;font-size:0.98rem;border-radius:6px;background:#e74c3c;color:#fff;border:none;cursor:pointer;">删除</button>
+                        </div>
+                        
+                        <div class="formula-box">
+                            <div class="formula-title">计算公式:</div>
+                            <div>先触发B: S = (S1×C - S2×C + L×V + T×V×C) / (2×V)</div>
+                            <div>先触发A: S = (S2×C - S1×C + L×V + T×V×C) / (2×V)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 超声波定位 -->
+            <div class="converter-subsection ultra-subsection">
+                <div class="converter-grid">
+                    <div class="converter-card positioning">
+                        <div class="card-header">
+                            <div class="icon">
+                                <i class="fas fa-wave-square"></i>
+                            </div>
+                            <div class="card-title">双超声波定位</div>
+                        </div>
+                        <p class="card-description">计算超声波信号源位置</p>
+                        
+                        <div class="input-row">
+                            <div class="input-column">
+                                <label for="ultraL">传感器距离 L (m):</label>
+                                <input type="number" id="ultraL" placeholder="输入距离..." value="5">
+                            </div>
+                            
+                            <div class="input-column">
+                                <label for="ultraV">金属表面传播速度 V (m/s):</label>
+                                <input type="number" id="ultraV" placeholder="输入速度..." value="6000">
+                            </div>
+                            
+                            <div class="input-column">
+                                <label for="ultraT">时差 T (s):</label>
+                                <input type="number" id="ultraT" placeholder="输入时差..." value="0.000001" step="0.000001">
+                            </div>
+                            <div class="input-column">
+                                <label for="ultraTrigger">先触发传感器:</label>
+                                <select id="ultraTrigger">
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="result-box" id="ultraResult">
+                            结果将显示在这里
+                        </div>
+                        
+                        <!-- SVG示意图区域 -->
+                        <div class="visual-diagram" id="ultraDiagram" style="margin:20px 0; width:100%; max-width:600px;"></div>
+                        <!-- 图例 -->
+                        <div id="ultraLegend" style="display:flex;gap:18px;align-items:center;justify-content:center;margin-bottom:10px;font-size:0.98rem;">
+                            <span style="display:flex;align-items:center;"><span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#6dd5fa,#1a2a6c);margin-right:6px;"></span>A点</span>
+                            <span style="display:flex;align-items:center;"><span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#fbc2eb,#e67e22);margin-right:6px;"></span>B点</span>
+                            <span style="display:flex;align-items:center;"><span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#b2ff59,#27ae60);margin-right:6px;"></span>信号源S</span>
+                            <span style="display:inline-block;width:40px;height:6px;background:#888;border-radius:3px;margin-left:8px;margin-right:4px;"></span>距离L
+                        </div>
+                        <!-- 导出图片按钮 -->
+                        <div style="text-align:center;margin-bottom:10px;">
+                            <button id="ultraExportBtn" style="padding:7px 22px;font-size:1rem;border-radius:6px;background:#3498db;color:#fff;border:none;cursor:pointer;box-shadow:0 2px 8px rgba(52,152,219,0.08);transition:background 0.2s;">导出图片</button>
+                        </div>
+                        <!-- 参数组保存与切换 -->
+                        <div style="display:flex;justify-content:center;align-items:center;gap:10px;margin-bottom:10px;">
+                            <button id="ultraSaveGroupBtn" style="padding:6px 16px;font-size:0.98rem;border-radius:6px;background:#27ae60;color:#fff;border:none;cursor:pointer;">保存参数组</button>
+                            <select id="ultraGroupSelect" style="padding:6px 10px;font-size:0.98rem;border-radius:6px;min-width:120px;"></select>
+                            <button id="ultraDeleteGroupBtn" style="padding:6px 10px;font-size:0.98rem;border-radius:6px;background:#e74c3c;color:#fff;border:none;cursor:pointer;">删除</button>
+                        </div>
+                        
+                        <div class="formula-box">
+                            <div class="formula-title">计算公式:</div>
+                            <div>S = (L - T×V) / 2</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 地电压定位 -->
+            <div class="converter-subsection tev-subsection">
+                <div class="converter-grid">
+                    <div class="converter-card positioning">
+                        <div class="card-header">
+                            <div class="icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="card-title">双暂态地电压定位</div>
+                        </div>
+                        <p class="card-description">计算地电压信号源位置</p>
+                        
+                        <div class="input-row">
+                            <div class="input-column">
+                                <label for="tevL">传感器距离 L (m):</label>
+                                <input type="number" id="tevL" placeholder="输入距离..." value="5">
+                            </div>
+                            
+                            <div class="input-column">
+                                <label for="tevS1">内置传感器电缆长度 S1 (m):</label>
+                                <input type="number" id="tevS1" placeholder="输入长度..." value="0">
+                            </div>
+                            
+                            <div class="input-column">
+                                <label for="tevS2">外置传感器电缆长度 S2 (m):</label>
+                                <input type="number" id="tevS2" placeholder="输入长度..." value="2">
+                            </div>
+                        </div>
+                        
+                        <div class="input-row">
+                            <div class="input-column">
+                                <label for="tevV">电缆传播速度 V (m/ns):</label>
+                                <input type="number" id="tevV" placeholder="输入速度..." value="0.2" step="0.01">
+                            </div>
+                            
+                            <div class="input-column">
+                                <label for="tevC">传播速度 C (m/ns):</label>
+                                <input type="number" id="tevC" placeholder="输入速度..." value="0.3" step="0.01">
+                            </div>
+                            
+                            <div class="input-column">
+                                <label for="tevT">时差 T (ns):</label>
+                                <input type="number" id="tevT" placeholder="输入时差..." value="2">
+                            </div>
+                        </div>
+                        
+                        <div class="input-row">
+                            <div class="input-column">
+                                <label for="tevTrigger">先触发传感器:</label>
+                                <select id="tevTrigger">
+                                    <option value="external">外置</option>
+                                    <option value="internal">内置</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="result-box" id="tevResult">
+                            结果将显示在这里
+                        </div>
+                        
+                        <!-- SVG示意图区域 -->
+                        <div class="visual-diagram" id="tevDiagram" style="margin:20px 0; width:100%; max-width:600px;"></div>
+                        <!-- 图例 -->
+                        <div id="tevLegend" style="display:flex;gap:18px;align-items:center;justify-content:center;margin-bottom:10px;font-size:0.98rem;">
+                            <span style="display:flex;align-items:center;"><span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#6dd5fa,#1a2a6c);margin-right:6px;"></span>A点(内置)</span>
+                            <span style="display:flex;align-items:center;"><span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#fbc2eb,#e67e22);margin-right:6px;"></span>B点(外置)</span>
+                            <span style="display:flex;align-items:center;"><span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#b2ff59,#27ae60);margin-right:6px;"></span>信号源S</span>
+                            <span style="display:inline-block;width:40px;height:6px;background:#888;border-radius:3px;margin-left:8px;margin-right:4px;"></span>距离L
+                        </div>
+                        <!-- 导出图片按钮 -->
+                        <div style="text-align:center;margin-bottom:10px;">
+                            <button id="tevExportBtn" style="padding:7px 22px;font-size:1rem;border-radius:6px;background:#3498db;color:#fff;border:none;cursor:pointer;box-shadow:0 2px 8px rgba(52,152,219,0.08);transition:background 0.2s;">导出图片</button>
+                        </div>
+                        <!-- 参数组保存与切换 -->
+                        <div style="display:flex;justify-content:center;align-items:center;gap:10px;margin-bottom:10px;">
+                            <button id="tevSaveGroupBtn" style="padding:6px 16px;font-size:0.98rem;border-radius:6px;background:#27ae60;color:#fff;border:none;cursor:pointer;">保存参数组</button>
+                            <select id="tevGroupSelect" style="padding:6px 10px;font-size:0.98rem;border-radius:6px;min-width:120px;"></select>
+                            <button id="tevDeleteGroupBtn" style="padding:6px 10px;font-size:0.98rem;border-radius:6px;background:#e74c3c;color:#fff;border:none;cursor:pointer;">删除</button>
+                        </div>
+                        
+                        <div class="formula-box">
+                            <div class="formula-title">计算公式:</div>
+                            <div>先触发外置: S = (S1×C - S2×C + L×V + T×V×C) / (2×V)</div>
+                            <div>先触发内置: S = (S2×C - S1×C + L×V + T×V×C) / (2×V)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 高频反射定位 -->
+            <div class="converter-subsection hf-subsection">
+                <div class="converter-grid">
+                    <div class="converter-card positioning">
+                        <div class="card-header">
+                            <div class="icon">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                            <div class="card-title">高频电流单端反射定位</div>
+                        </div>
+                        <p class="card-description">计算高频电流反射位置</p>
+                        
+                        <div class="input-row">
+                            <div class="input-column">
+                                <label for="hfV">传播速度 V (m/ns):</label>
+                                <input type="number" id="hfV" placeholder="输入速度..." value="0.2" step="0.01">
+                            </div>
+                            
+                            <div class="input-column">
+                                <label for="hfT">时差 T (ns):</label>
+                                <input type="number" id="hfT" placeholder="输入时差..." value="800">
+                            </div>
+                        </div>
+                        
+                        <div class="result-box" id="hfResult">
+                            结果将显示在这里
+                        </div>
+                        
+                        <!-- SVG示意图区域 -->
+                        <div class="visual-diagram" id="hfDiagram" style="margin:20px 0; width:100%; max-width:600px;"></div>
+                        <!-- 图例 -->
+                        <div id="hfLegend" style="display:flex;gap:18px;align-items:center;justify-content:center;margin-bottom:10px;font-size:0.98rem;">
+                            <span style="display:flex;align-items:center;"><span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#6dd5fa,#1a2a6c);margin-right:6px;"></span>A点</span>
+                            <span style="display:flex;align-items:center;"><span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#b2ff59,#27ae60);margin-right:6px;"></span>信号源S</span>
+                            <span style="display:flex;align-items:center;"><span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:#e67e22;margin-right:6px;"></span>反射点</span>
+                            <span style="display:inline-block;width:40px;height:6px;background:#888;border-radius:3px;margin-left:8px;margin-right:4px;"></span>距离
+                        </div>
+                        <!-- 导出图片按钮 -->
+                        <div style="text-align:center;margin-bottom:10px;">
+                            <button id="hfExportBtn" style="padding:7px 22px;font-size:1rem;border-radius:6px;background:#3498db;color:#fff;border:none;cursor:pointer;box-shadow:0 2px 8px rgba(52,152,219,0.08);transition:background 0.2s;">导出图片</button>
+                        </div>
+                        <!-- 参数组保存与切换 -->
+                        <div style="display:flex;justify-content:center;align-items:center;gap:10px;margin-bottom:10px;">
+                            <button id="hfSaveGroupBtn" style="padding:6px 16px;font-size:0.98rem;border-radius:6px;background:#27ae60;color:#fff;border:none;cursor:pointer;">保存参数组</button>
+                            <select id="hfGroupSelect" style="padding:6px 10px;font-size:0.98rem;border-radius:6px;min-width:120px;"></select>
+                            <button id="hfDeleteGroupBtn" style="padding:6px 10px;font-size:0.98rem;border-radius:6px;background:#e74c3c;color:#fff;border:none;cursor:pointer;">删除</button>
+                        </div>
+                        
+                        <div class="formula-box">
+                            <div class="formula-title">计算公式:</div>
+                            <div>S = (V × T) / 2</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 声电联合定位 -->
+            <div class="converter-subsection ae-subsection">
+                <div class="converter-grid">
+                    <div class="converter-card positioning">
+                        <div class="card-header">
+                            <div class="icon">
+                                <i class="fas fa-microphone-alt"></i>
+                            </div>
+                            <div class="card-title">声电联合定位</div>
+                        </div>
+                        <p class="card-description">计算声电联合信号源位置</p>
+                        
+                        <div class="input-row">
+                            <div class="input-column">
+                                <label for="aeV">传播速度 V (m/s):</label>
+                                <input type="number" id="aeV" placeholder="输入速度..." value="130">
+                            </div>
+                            
+                            <div class="input-column">
+                                <label for="aeT">时差 T (s):</label>
+                                <input type="number" id="aeT" placeholder="输入时差..." value="0.1" step="0.01">
+                            </div>
+                        </div>
+                        
+                        <div class="result-box" id="aeResult">
+                            结果将显示在这里
+                        </div>
+                        
+                        <!-- SVG示意图区域 -->
+                        <div class="visual-diagram" id="aeDiagram" style="margin:20px 0; width:100%; max-width:600px;"></div>
+                        <!-- 图例 -->
+                        <div id="aeLegend" style="display:flex;gap:18px;align-items:center;justify-content:center;margin-bottom:10px;font-size:0.98rem;">
+                            <span style="display:flex;align-items:center;"><span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#6dd5fa,#1a2a6c);margin-right:6px;"></span>A点(超声波)</span>
+                            <span style="display:flex;align-items:center;"><span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#b2ff59,#27ae60);margin-right:6px;"></span>信号源S</span>
+                            <span style="display:flex;align-items:center;"><span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#fbc2eb,#e67e22);margin-right:6px;"></span>B点(特高频/高频电流)</span>
+                            <span style="display:inline-block;width:40px;height:6px;background:#888;border-radius:3px;margin-left:8px;margin-right:4px;"></span>距离
+                        </div>
+                        <!-- 导出图片按钮 -->
+                        <div style="text-align:center;margin-bottom:10px;">
+                            <button id="aeExportBtn" style="padding:7px 22px;font-size:1rem;border-radius:6px;background:#3498db;color:#fff;border:none;cursor:pointer;box-shadow:0 2px 8px rgba(52,152,219,0.08);transition:background 0.2s;">导出图片</button>
+                        </div>
+                        <!-- 参数组保存与切换 -->
+                        <div style="display:flex;justify-content:center;align-items:center;gap:10px;margin-bottom:10px;">
+                            <button id="aeSaveGroupBtn" style="padding:6px 16px;font-size:0.98rem;border-radius:6px;background:#27ae60;color:#fff;border:none;cursor:pointer;">保存参数组</button>
+                            <select id="aeGroupSelect" style="padding:6px 10px;font-size:0.98rem;border-radius:6px;min-width:120px;"></select>
+                            <button id="aeDeleteGroupBtn" style="padding:6px 10px;font-size:0.98rem;border-radius:6px;background:#e74c3c;color:#fff;border:none;cursor:pointer;">删除</button>
+                        </div>
+                        
+                        <div class="formula-box">
+                            <div class="formula-title">计算公式:</div>
+                            <div>S = V × T</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>电子工程计算工具 V3.0 &copy; 2025 | 集成单位换算与定位计算功能</p>
+        <div style="text-align:center;color:#888;font-size:0.98rem;margin-top:10px;">
+            版权所有 &copy; 苏凌霄，保留所有权利。<br>
+            本工具仅供学习与工程参考，禁止未经授权的商业用途。
+        </div>
+        </div>
+    </footer>
+    
+
+    <div class="custom-tooltip" id="customTooltip"></div>
+
+    <script>
+        // 当页面加载时初始化所有转换器
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化所有转换器
+            initVoltageConverter();
+            initPowerConverter();
+            initRatioConverter();
+            initFieldConverter();
+            initQuantizeConverter();
+            initPositioningCalculators();
+            
+            // 为所有输入添加事件监听
+            document.querySelectorAll('input, select').forEach(element => {
+                element.addEventListener('input', function() {
+                    const id = this.id;
+                    if (id.includes('voltage')) {
+                        initVoltageConverter();
+                    } 
+                    else if (id.includes('power')) {
+                        initPowerConverter();
+                    }
+                    else if (id.includes('ratio')) {
+                        initRatioConverter();
+                    }
+                    else if (id.includes('field')) {
+                        initFieldConverter();
+                    }
+                    else if (id.includes('adcBits') || id.includes('minRange') || 
+                             id.includes('maxRange') || id.includes('quantValue')) {
+                        initQuantizeConverter();
+                    }
+                    else if (id.includes('uhf') || id.includes('ultra') || 
+                             id.includes('tev') || id.includes('hf') || 
+                             id.includes('ae')) {
+                        initPositioningCalculators();
+                    }
+                });
+            });
+            
+            // 主标签切换
+            const mainTabs = document.querySelectorAll('.main-tab');
+            mainTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    
+                    // 移除所有活动标签
+                    mainTabs.forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                    
+                    // 添加活动状态
+                    this.classList.add('active');
+                    if (tabName === 'unit') {
+                        document.querySelector('.unit-section').classList.add('active');
+                        document.getElementById('unitSubTabs').style.display = 'flex';
+                        document.getElementById('positionSubTabs').style.display = 'none';
+                    } else if (tabName === 'position') {
+                        document.querySelector('.position-section').classList.add('active');
+                        document.getElementById('positionSubTabs').style.display = 'flex';
+                        document.getElementById('unitSubTabs').style.display = 'none';
+                    }
+                    
+                    // 激活第一个子标签
+                    const firstSubTab = document.querySelector(`#${tabName}SubTabs .sub-tab`);
+                    if (firstSubTab) {
+                        activateSubTab(firstSubTab);
+                    }
+                });
+            });
+            
+            // 子标签切换
+            const subTabs = document.querySelectorAll('.sub-tab');
+            subTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    activateSubTab(this);
+                });
+            });
+            
+            // 初始化显示第一个主标签和第一个子标签
+            document.querySelector('.main-tab.active').click();
+            
+            // 额外绑定特高频高亮
+            addUhfInputHighlight();
+            // 参数组保存与切换
+            refreshUhfGroupSelect();
+            bindUhfGroupEvents();
+            addUltraInputHighlight();
+            refreshUltraGroupSelect();
+            bindUltraGroupEvents();
+            addTevInputHighlight();
+            refreshTevGroupSelect();
+            bindTevGroupEvents();
+            addHfInputHighlight();
+            refreshHfGroupSelect();
+            bindHfGroupEvents();
+            addAeInputHighlight();
+            refreshAeGroupSelect();
+            bindAeGroupEvents();
+        });
+        
+        // 激活子标签函数
+        function activateSubTab(tab) {
+            const tabContainer = tab.closest('.sub-tabs-container');
+            const sectionId = tabContainer.id.replace('SubTabs', '');
+            const subtab = tab.getAttribute('data-subtab');
+            
+            // 移除所有活动子标签
+            tabContainer.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+            
+            // 隐藏所有子内容区
+            document.querySelectorAll(`.${sectionId}-section .converter-subsection`).forEach(s => s.classList.remove('active'));
+            
+            // 添加活动状态
+            tab.classList.add('active');
+            document.querySelector(`.${sectionId}-section .${subtab}-subsection`).classList.add('active');
+        }
+        
+        // 电压单位转换函数
+        function initVoltageConverter() {
+            const input = parseFloat(document.getElementById('voltageInput').value) || 0;
+            const fromUnit = document.getElementById('voltageFrom').value;
+            const toUnit = document.getElementById('voltageTo').value;
+            let result;
+            
+            // 如果单位相同，直接返回输入值
+            if (fromUnit === toUnit) {
+                result = input;
+            } 
+            // 转换到中间单位（dB）
+            else {
+                let valueInDB;
+                
+                switch(fromUnit) {
+                    case 'dB':
+                        valueInDB = input;
+                        break;
+                    case 'dBuV':
+                        valueInDB = input;
+                        break;
+                    case 'dBmV':
+                        valueInDB = input + 60;
+                        break;
+                    case 'uV':
+                        valueInDB = 20 * Math.log10(input);
+                        break;
+                    case 'mV':
+                        valueInDB = 20 * Math.log10(input * 1000);
+                        break;
+                    case 'V':
+                        valueInDB = 20 * Math.log10(input * 1000000);
+                        break;
+                    default:
+                        valueInDB = 0;
+                }
+                
+                // 从dB转换到目标单位
+                switch(toUnit) {
+                    case 'dB':
+                    case 'dBuV':
+                        result = valueInDB;
+                        break;
+                    case 'dBmV':
+                        result = valueInDB - 60;
+                        break;
+                    case 'uV':
+                        result = Math.pow(10, valueInDB / 20);
+                        break;
+                    case 'mV':
+                        result = Math.pow(10, (valueInDB - 60) / 20);
+                        break;
+                    case 'V':
+                        result = Math.pow(10, (valueInDB - 120) / 20);
+                        break;
+                    default:
+                        result = 0;
+                }
+            }
+            
+            // 显示结果
+            document.getElementById('voltageResult').textContent = 
+                `${result.toFixed(4)} ${toUnit}`;
+        }
+        
+        // 功率单位转换函数
+        function initPowerConverter() {
+            const input = parseFloat(document.getElementById('powerInput').value) || 0;
+            const fromUnit = document.getElementById('powerFrom').value;
+            const toUnit = document.getElementById('powerTo').value;
+            let result;
+            
+            // 如果单位相同，直接返回输入值
+            if (fromUnit === toUnit) {
+                result = input;
+            } 
+            // 转换到中间单位（mW）
+            else {
+                let valueInMW;
+                
+                switch(fromUnit) {
+                    case 'mW':
+                        valueInMW = input;
+                        break;
+                    case 'dBm':
+                        valueInMW = Math.pow(10, input / 10);
+                        break;
+                    case 'mV': 
+                        valueInMW = (Math.pow(input / 1000, 2) / 50) * 1000;
+                        break;
+                    case 'V': 
+                        valueInMW = (Math.pow(input, 2) / 50) * 1000;
+                        break;
+                    default:
+                        valueInMW = 0;
+                }
+                
+                // 从mW转换到目标单位
+                switch(toUnit) {
+                    case 'mW':
+                        result = valueInMW;
+                        break;
+                    case 'dBm':
+                        result = 10 * Math.log10(valueInMW);
+                        break;
+                    case 'mV':
+                        result = Math.sqrt(valueInMW / 1000 * 50) * 1000;
+                        break;
+                    case 'V':
+                        result = Math.sqrt(valueInMW / 1000 * 50);
+                        break;
+                    default:
+                        result = 0;
+                }
+            }
+            
+            document.getElementById('powerResult').textContent = 
+                `${result.toFixed(4)} ${toUnit}`;
+        }
+        
+        // 倍数与dB转换函数
+        function initRatioConverter() {
+            const input = parseFloat(document.getElementById('ratioInput').value) || 0;
+            const fromUnit = document.getElementById('ratioFrom').value;
+            const toUnit = document.getElementById('ratioTo').value;
+            let result;
+            
+            if (fromUnit === toUnit) {
+                result = input;
+            } else {
+                if (fromUnit === 'ratio' && toUnit === 'dB') {
+                    result = 20 * Math.log10(input);
+                } else if (fromUnit === 'dB' && toUnit === 'ratio') {
+                    result = Math.pow(10, input / 20);
+                }
+            }
+            
+            document.getElementById('ratioResult').textContent = 
+                `${result.toFixed(4)} ${toUnit === 'dB' ? 'dB' : ''}`;
+        }
+        
+        // 场强单位转换函数
+        function initFieldConverter() {
+            const input = parseFloat(document.getElementById('fieldInput').value) || 0;
+            const fromUnit = document.getElementById('fieldFrom').value;
+            const toUnit = document.getElementById('fieldTo').value;
+            let result;
+            
+            if (fromUnit === toUnit) {
+                result = input;
+            } else {
+                if (fromUnit === 'V/m' && toUnit === 'dBV/m') {
+                    result = 20 * Math.log10(input);
+                } else if (fromUnit === 'dBV/m' && toUnit === 'V/m') {
+                    result = Math.pow(10, input / 20);
+                }
+            }
+            
+            document.getElementById('fieldResult').textContent = 
+                `${result.toFixed(4)} ${toUnit}`;
+        }
+        
+        // 量化幅值转换函数
+        function initQuantizeConverter() {
+            // 获取输入值
+            const adcBits = parseInt(document.getElementById('adcBits').value) || 8;
+            const minRange = parseFloat(document.getElementById('minRange').value) || 0;
+            const maxRange = parseFloat(document.getElementById('maxRange').value) || 0;
+            let quantValue = parseInt(document.getElementById('quantValue').value) || 0;
+            
+            // 计算量化级数 (2^N)
+            const quantLevels = Math.pow(2, adcBits);
+            
+            // 设置量化级数显示
+            document.getElementById('quantLevels').textContent = quantLevels;
+            
+            // 设置量化范围显示
+            const quantMax = quantLevels - 1;
+            document.getElementById('quantRange').textContent = `0 ~ ${quantMax}`;
+            
+            // 设置量化值输入框的max属性
+            document.getElementById('quantValue').max = quantMax;
+            
+            // 确保量化值在有效范围内
+            if (quantValue < 0) quantValue = 0;
+            if (quantValue > quantMax) quantValue = quantMax;
+            document.getElementById('quantValue').value = quantValue;
+            
+            // 计算实际幅值
+            const amplitude = minRange + (maxRange - minRange) * (quantValue / quantMax);
+            
+            // 显示结果
+            document.getElementById('quantResult').textContent = 
+                `实际幅值: ${amplitude.toFixed(4)}`;
+                
+            // 更新可视化
+            updateQuantVisualization(quantValue, quantMax);
+        }
+        
+        // 更新量化可视化
+        function updateQuantVisualization(value, max) {
+            const bar = document.getElementById('quantBar');
+            const percentage = (value / max) * 100;
+            bar.style.width = `${percentage}%`;
+        }
+        
+        // 定位计算函数
+        function initPositioningCalculators() {
+            // 双特高频定位计算
+            const uhfL = parseFloat(document.getElementById('uhfL').value) || 0;
+            const uhfS1 = parseFloat(document.getElementById('uhfS1').value) || 0;
+            const uhfS2 = parseFloat(document.getElementById('uhfS2').value) || 0;
+            const uhfV = parseFloat(document.getElementById('uhfV').value) || 0;
+            const uhfC = parseFloat(document.getElementById('uhfC').value) || 0;
+            const uhfT = parseFloat(document.getElementById('uhfT').value) || 0;
+            const uhfTrigger = document.getElementById('uhfTrigger').value;
+            
+            let uhfResult;
+            if (uhfTrigger === 'B') {
+                uhfResult = (uhfS1 * uhfC - uhfS2 * uhfC + uhfL * uhfV + uhfT * uhfV * uhfC) / (2 * uhfV);
+            } else {
+                uhfResult = (uhfS2 * uhfC - uhfS1 * uhfC + uhfL * uhfV + uhfT * uhfV * uhfC) / (2 * uhfV);
+            }
+            let uhfLabel = uhfTrigger === 'A' ? '（距离A）' : '（距离B）';
+            document.getElementById('uhfResult').textContent = `定位结果: ${uhfResult.toFixed(4)} m ${uhfLabel}`;
+            
+            // SVG示意图
+            drawUhfDiagram({L: uhfL, S1: uhfS1, S2: uhfS2, V: uhfV, C: uhfC, T: uhfT, trigger: uhfTrigger, S: uhfResult});
+            
+            // 双超声波定位计算
+            const ultraL = parseFloat(document.getElementById('ultraL').value) || 0;
+            const ultraV = parseFloat(document.getElementById('ultraV').value) || 0;
+            const ultraT = parseFloat(document.getElementById('ultraT').value) || 0;
+            const ultraTrigger = document.getElementById('ultraTrigger') ? document.getElementById('ultraTrigger').value : 'A';
+            
+            let ultraResult = (ultraL - ultraT * ultraV) / 2;
+            let ultraLabel = ultraTrigger === 'A' ? '（距离A）' : '（距离B）';
+            document.getElementById('ultraResult').textContent = `定位结果: ${ultraResult.toFixed(4)} m ${ultraLabel}`;
+            drawUltraDiagram({L: ultraL, V: ultraV, T: ultraT, S: ultraResult, trigger: ultraTrigger});
+            
+            // 双暂态地电压定位计算
+            const tevL = parseFloat(document.getElementById('tevL').value) || 0;
+            const tevS1 = parseFloat(document.getElementById('tevS1').value) || 0;
+            const tevS2 = parseFloat(document.getElementById('tevS2').value) || 0;
+            const tevV = parseFloat(document.getElementById('tevV').value) || 0;
+            const tevC = parseFloat(document.getElementById('tevC').value) || 0;
+            const tevT = parseFloat(document.getElementById('tevT').value) || 0;
+            const tevTrigger = document.getElementById('tevTrigger').value;
+            
+            let tevResult;
+            if (tevTrigger === 'external') {
+                tevResult = (tevS1 * tevC - tevS2 * tevC + tevL * tevV + tevT * tevV * tevC) / (2 * tevV);
+            } else {
+                tevResult = (tevS2 * tevC - tevS1 * tevC + tevL * tevV + tevT * tevV * tevC) / (2 * tevV);
+            }
+            let tevLabel = tevTrigger === 'internal' ? '（距离A点）' : '（距离B点）';
+            document.getElementById('tevResult').textContent = `定位结果: ${tevResult.toFixed(4)} m ${tevLabel}`;
+            drawTevDiagram({L: tevL, S1: tevS1, S2: tevS2, V: tevV, C: tevC, T: tevT, trigger: tevTrigger, S: tevResult});
+            
+            // 高频电流单端反射定位计算
+            const hfV = parseFloat(document.getElementById('hfV').value) || 0;
+            const hfT = parseFloat(document.getElementById('hfT').value) || 0;
+            
+            const hfResult = (hfV * hfT) / 2;
+            document.getElementById('hfResult').textContent = `定位结果: ${hfResult.toFixed(4)} m（距离反射点）`;
+            drawHfDiagram({V: hfV, T: hfT, S: hfResult});
+            
+            // 声电联合定位计算
+            const aeV = parseFloat(document.getElementById('aeV').value) || 0;
+            const aeT = parseFloat(document.getElementById('aeT').value) || 0;
+            
+            const aeResult = aeV * aeT;
+            document.getElementById('aeResult').textContent = `定位结果: ${aeResult.toFixed(4)} m（距离A）`;
+            drawAeDiagram({V: aeV, T: aeT, S: aeResult});
+        }
+
+        // ========== 高亮与tooltip工具 ==========
+        function highlightSvgElement(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.add('highlight');
+                setTimeout(() => el.classList.remove('highlight'), 1000);
+            }
+        }
+        // Tooltip浮层
+        function showTooltip(content, x, y) {
+            const tooltip = document.getElementById('customTooltip');
+            tooltip.textContent = content;
+            tooltip.style.left = (x + 12) + 'px';
+            tooltip.style.top = (y + 12) + 'px';
+            tooltip.style.display = 'block';
+        }
+        function hideTooltip() {
+            document.getElementById('customTooltip').style.display = 'none';
+        }
+        // ========== 监听特高频参数input高亮SVG ==========
+        function addUhfInputHighlight() {
+            [
+                {id:'uhfL', svg:'uhf-line-L', tip:'L: 两传感器间距离'},
+                {id:'uhfS1', svg:'uhf-cable-S1', tip:'S1: 传感器A电缆长度'},
+                {id:'uhfS2', svg:'uhf-cable-S2', tip:'S2: 传感器B电缆长度'},
+                {id:'uhfV', svg:'uhf-label-V', tip:'V: 电缆传播速度'},
+                {id:'uhfC', svg:'uhf-label-C', tip:'C: 传播速度'},
+                {id:'uhfT', svg:'uhf-label-T', tip:'T: 时差'},
+                {id:'uhfTrigger', svg:'uhf-sensorA', tip:'先触发传感器'}
+            ].forEach(({id,svg,tip}) => {
+                const el = document.getElementById(id);
+                if (el && !el._uhfBound) {
+                    el.addEventListener('input', () => {
+                        highlightSvgElement(svg);
+                        validateUhfInputs();
+                    });
+                    el._uhfBound = true;
+                }
+            });
+            // 初始校验
+            validateUhfInputs();
+        }
+        // ========== 特高频参数校验 ==========
+        function validateUhfInputs() {
+            // 校验规则
+            const rules = [
+                {id:'uhfL', svg:'uhf-line-L', name:'L', check:v=>v>0, msg:'L必须大于0'},
+                {id:'uhfS1', svg:'uhf-cable-S1', name:'S1', check:v=>v>=0, msg:'S1不能小于0'},
+                {id:'uhfS2', svg:'uhf-cable-S2', name:'S2', check:v=>v>=0, msg:'S2不能小于0'},
+                {id:'uhfV', svg:'uhf-label-V', name:'V', check:v=>v>0, msg:'V必须大于0'},
+                {id:'uhfC', svg:'uhf-label-C', name:'C', check:v=>v>0, msg:'C必须大于0'},
+                {id:'uhfT', svg:'uhf-label-T', name:'T', check:v=>v>=0, msg:'T不能小于0'}
+            ];
+            rules.forEach(({id,svg,check,msg}) => {
+                const input = document.getElementById(id);
+                if (!input) return;
+                // 移除旧错误
+                input.classList.remove('error');
+                let tip = input.nextElementSibling;
+                if (tip && tip.classList.contains('input-error-tip')) {
+                    tip.remove();
+                }
+                // SVG元素恢复
+                const svgEl = document.getElementById(svg);
+                if (svgEl) svgEl.classList.remove('svg-error');
+                // 校验
+                const val = parseFloat(input.value);
+                if (!check(val)) {
+                    input.classList.add('error');
+                    // 显示错误提示
+                    const err = document.createElement('div');
+                    err.className = 'input-error-tip';
+                    err.textContent = msg;
+                    input.parentNode.appendChild(err);
+                    // SVG高亮
+                    if (svgEl) svgEl.classList.add('svg-error');
+                }
+            });
+        }
+
+        // ========== 特高频定位SVG绘制与动画 ==========
+        function drawUhfDiagram({L, S1, S2, V, C, T, trigger, S}) {
+            // 自适应宽度
+            const width = 600, height = 220;
+            const margin = 60;
+            const sensorAY = 70, sensorBY = 70;
+            const sensorAX = margin, sensorBX = width - margin;
+            const centerY = 140;
+            let Sx;
+            if (trigger === 'A') {
+                Sx = sensorAX + (sensorBX - sensorAX) * (S / L);
+            } else {
+                Sx = sensorBX - (sensorBX - sensorAX) * (S / L);
+            }
+            if (Sx < sensorAX) Sx = sensorAX;
+            if (Sx > sensorBX) Sx = sensorBX;
+            // 信号传播动画参数
+            const animDuration = 1800; // ms
+            // SVG模板
+            const svg = `
+            <svg id="uhf-svg" width="100%" height="${height}" viewBox="0 0 ${width} ${height}" style="max-width:100%;" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                    <radialGradient id="sensorAgrad" cx="50%" cy="50%" r="60%">
+                        <stop offset="0%" stop-color="#6dd5fa"/>
+                        <stop offset="100%" stop-color="#1a2a6c"/>
+                    </radialGradient>
+                    <radialGradient id="sensorBgrad" cx="50%" cy="50%" r="60%">
+                        <stop offset="0%" stop-color="#fbc2eb"/>
+                        <stop offset="100%" stop-color="#e67e22"/>
+                    </radialGradient>
+                    <radialGradient id="pointGrad" cx="50%" cy="50%" r="60%">
+                        <stop offset="0%" stop-color="#b2ff59"/>
+                        <stop offset="100%" stop-color="#27ae60"/>
+                    </radialGradient>
+                    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                    <marker id="arrow" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L8,4 L0,8 L2,4 Z" fill="#888" />
+                    </marker>
+                    <filter id="pulse" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="6" result="blur"/>
+                        <feMerge>
+                            <feMergeNode in="blur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <!-- 传感器A -->
+                <circle id="uhf-sensorA" cx="${sensorAX}" cy="${sensorAY}" r="18" fill="url(#sensorAgrad)" filter="url(#glow)"/>
+                <text id="uhf-labelA" x="${sensorAX}" y="${sensorAY - 28}" text-anchor="middle" font-size="15" fill="#1a2a6c" font-weight="bold">A</text>
+                <!-- 传感器B -->
+                <circle id="uhf-sensorB" cx="${sensorBX}" cy="${sensorBY}" r="18" fill="url(#sensorBgrad)" filter="url(#glow)"/>
+                <text id="uhf-labelB" x="${sensorBX}" y="${sensorBY - 28}" text-anchor="middle" font-size="15" fill="#e67e22" font-weight="bold">B</text>
+                <!-- 传感器距离L -->
+                <line id="uhf-line-L" x1="${sensorAX}" y1="${sensorAY}" x2="${sensorBX}" y2="${sensorBY}" stroke="#888" stroke-width="4" stroke-dasharray="10,6"/>
+                <rect x="${(sensorAX+sensorBX)/2-32}" y="${sensorAY-32}" rx="8" ry="8" width="64" height="26" fill="#fff" fill-opacity="0.8"/>
+                <text x="${(sensorAX+sensorBX)/2}" y="${sensorAY-15}" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">L = ${L} m</text>
+                <!-- 电缆S1 -->
+                <line id="uhf-cable-S1" x1="${sensorAX}" y1="${sensorAY}" x2="${sensorAX}" y2="${centerY}" stroke="#3498db" stroke-width="3" marker-end="url(#arrow)" stroke-dasharray="6,4"/>
+                <rect x="${sensorAX-48}" y="${(sensorAY+centerY)/2-14}" rx="8" ry="8" width="46" height="22" fill="#3498db" fill-opacity="0.15"/>
+                <text x="${sensorAX-25}" y="${(sensorAY+centerY)/2+2}" text-anchor="middle" font-size="13" fill="#3498db">S1=${S1}m</text>
+                <!-- 电缆S2 -->
+                <line id="uhf-cable-S2" x1="${sensorBX}" y1="${sensorBY}" x2="${sensorBX}" y2="${centerY}" stroke="#e67e22" stroke-width="3" marker-end="url(#arrow)" stroke-dasharray="6,4"/>
+                <rect x="${sensorBX+2}" y="${(sensorBY+centerY)/2-14}" rx="8" ry="8" width="46" height="22" fill="#e67e22" fill-opacity="0.15"/>
+                <text x="${sensorBX+25}" y="${(sensorBY+centerY)/2+2}" text-anchor="middle" font-size="13" fill="#e67e22">S2=${S2}m</text>
+                <!-- 定位点S -->
+                <circle id="uhf-pointS" cx="${Sx}" cy="${sensorAY}" r="12" fill="url(#pointGrad)" filter="url(#pulse)">
+                    <animate attributeName="r" values="12;18;12" dur="1.2s" repeatCount="indefinite"/>
+                </circle>
+                <rect x="${Sx-32}" y="${sensorAY+18}" rx="8" ry="8" width="64" height="22" fill="#27ae60" fill-opacity="0.15"/>
+                <text id="uhf-labelS" x="${Sx}" y="${sensorAY+34}" text-anchor="middle" font-size="13" fill="#27ae60" font-weight="bold">S=${S.toFixed(2)}m</text>
+                <!-- 传播速度V、C、时差T标注 -->
+                <rect id="uhf-label-V" x="${sensorAX+10}" y="${centerY+18}" rx="8" ry="8" width="60" height="20" fill="#8e44ad" fill-opacity="0.12"/>
+                <text x="${sensorAX+40}" y="${centerY+32}" font-size="12" fill="#8e44ad">V=${V}m/ns</text>
+                <rect id="uhf-label-C" x="${sensorBX-70}" y="${centerY+18}" rx="8" ry="8" width="60" height="20" fill="#8e44ad" fill-opacity="0.12"/>
+                <text x="${sensorBX-40}" y="${centerY+32}" font-size="12" fill="#8e44ad">C=${C}m/ns</text>
+                <rect id="uhf-label-T" x="${(sensorAX+sensorBX)/2-32}" y="${centerY+38}" rx="8" ry="8" width="64" height="20" fill="#c0392b" fill-opacity="0.12"/>
+                <text x="${(sensorAX+sensorBX)/2}" y="${centerY+52}" text-anchor="middle" font-size="12" fill="#c0392b">T=${T}ns</text>
+                <!-- 信号传播动画小圆点（S->A, S->B） -->
+                <circle id="uhf-anim-dotA" r="8" fill="#ffeb3b" stroke="#333" stroke-width="2" style="opacity:0.92;"/>
+                <circle id="uhf-anim-dotB" r="8" fill="#ffeb3b" stroke="#333" stroke-width="2" style="opacity:0.92;"/>
+            </svg>
+            `;
+            document.getElementById('uhfDiagram').innerHTML = svg;
+            // 信号传播动画
+            animateUhfSignal(sensorAX, sensorAY, Sx, sensorAY, sensorBX, sensorBY, animDuration);
+            // SVG气泡说明
+            addUhfSvgTooltips();
+            // 绑定导出图片按钮
+            bindUhfExportBtn();
+        }
+        // 信号传播动画：S->A, S->B
+        function animateUhfSignal(ax, ay, sx, sy, bx, by, baseDuration) {
+            const dotA = document.getElementById('uhf-anim-dotA');
+            const dotB = document.getElementById('uhf-anim-dotB');
+            if (!dotA || !dotB) return;
+            const distA = Math.hypot(ax-sx, ay-sy);
+            const distB = Math.hypot(bx-sx, by-sy);
+            let durationA = baseDuration * (distA < distB ? 0.7 : 1);
+            let durationB = baseDuration * (distB < distA ? 0.7 : 1);
+            if (distA === distB) durationA = durationB = baseDuration;
+            let start = null;
+            function step(ts) {
+                if (!start) start = ts;
+                let elapsed = ts - start;
+                let fracA = Math.min(elapsed / durationA, 1);
+                let fracB = Math.min(elapsed / durationB, 1);
+                dotA.setAttribute('cx', sx + (ax-sx)*fracA);
+                dotA.setAttribute('cy', sy + (ay-sy)*fracA);
+                dotB.setAttribute('cx', sx + (bx-sx)*fracB);
+                dotB.setAttribute('cy', sy + (by-by)*fracB);
+                if (fracA < 1 || fracB < 1) {
+                    requestAnimationFrame(step);
+                }
+            }
+            dotA.setAttribute('cx', sx);
+            dotA.setAttribute('cy', sy);
+            dotB.setAttribute('cx', sx);
+            dotB.setAttribute('cy', sy);
+            requestAnimationFrame(step);
+        }
+        // SVG气泡说明
+        function addUhfSvgTooltips() {
+            const tips = {
+                'uhf-sensorA': 'A点\n传感器A',
+                'uhf-sensorB': 'B点\n传感器B',
+                'uhf-pointS': 'S\n信号源定位点',
+                'uhf-cable-S1': 'S1\n传感器A电缆',
+                'uhf-cable-S2': 'S2\n传感器B电缆',
+                'uhf-line-L': 'L\n两传感器间距离',
+                'uhf-label-V': 'V\n电缆传播速度',
+                'uhf-label-C': 'C\n传播速度',
+                'uhf-label-T': 'T\n时差',
+            };
+            Object.entries(tips).forEach(([id, tip]) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('mouseenter', e => {
+                        showTooltip(tip, e.clientX, e.clientY);
+                    });
+                    el.addEventListener('mouseleave', hideTooltip);
+                }
+            });
+        }
+        // 导出SVG为PNG图片
+        function bindUhfExportBtn() {
+            const btn = document.getElementById('uhfExportBtn');
+            const svgEl = document.getElementById('uhf-svg');
+            if (!btn || !svgEl) return;
+            btn.onclick = function() {
+                // 克隆SVG节点，去除动画点
+                const clone = svgEl.cloneNode(true);
+                // 可选：移除动画点（不导出动画）
+                clone.querySelectorAll('#uhf-anim-dotA,#uhf-anim-dotB').forEach(e=>e.remove());
+                // 序列化SVG
+                const serializer = new XMLSerializer();
+                const svgStr = serializer.serializeToString(clone);
+                // 创建图片
+                const img = new window.Image();
+                const svg64 = btoa(unescape(encodeURIComponent(svgStr)));
+                const image64 = 'data:image/svg+xml;base64,' + svg64;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = svgEl.viewBox.baseVal.width;
+                    canvas.height = svgEl.viewBox.baseVal.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(0,0,canvas.width,canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                    const url = canvas.toDataURL('image/png');
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'uhf定位图.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                };
+                img.src = image64;
+            };
+        }
+
+        function drawUltraDiagram({L, V, T, S, trigger}) {
+            const width = 420, height = 160;
+            const margin = 60;
+            const sensorAX = margin, sensorBX = width - margin;
+            const sensorY = 60, centerY = 120;
+            let Sx;
+            if (trigger === 'A') {
+                Sx = sensorAX + (sensorBX - sensorAX) * (S / L);
+            } else {
+                Sx = sensorBX - (sensorBX - sensorAX) * (S / L);
+            }
+            if (Sx < sensorAX) Sx = sensorAX;
+            if (Sx > sensorBX) Sx = sensorBX;
+            const svg = `
+            <svg id="ultra-svg" width="100%" height="${height}" viewBox="0 0 ${width} ${height}" style="max-width:100%;" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                    <radialGradient id="ultraA" cx="50%" cy="50%" r="60%">
+                        <stop offset="0%" stop-color="#6dd5fa"/>
+                        <stop offset="100%" stop-color="#1a2a6c"/>
+                    </radialGradient>
+                    <radialGradient id="ultraB" cx="50%" cy="50%" r="60%">
+                        <stop offset="0%" stop-color="#fbc2eb"/>
+                        <stop offset="100%" stop-color="#e67e22"/>
+                    </radialGradient>
+                    <radialGradient id="ultraP" cx="50%" cy="50%" r="60%">
+                        <stop offset="0%" stop-color="#b2ff59"/>
+                        <stop offset="100%" stop-color="#27ae60"/>
+                    </radialGradient>
+                    <filter id="ultraGlow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                    <filter id="ultraPulse" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="6" result="blur"/>
+                        <feMerge>
+                            <feMergeNode in="blur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <!-- 传感器A -->
+                <circle id="ultra-sensorA" cx="${sensorAX}" cy="${sensorY}" r="16" fill="url(#ultraA)" filter="url(#ultraGlow)" />
+                <text id="ultra-labelA" x="${sensorAX}" y="${sensorY-22}" text-anchor="middle" font-size="14" fill="#1a2a6c" font-weight="bold">A</text>
+                <!-- 传感器B -->
+                <circle id="ultra-sensorB" cx="${sensorBX}" cy="${sensorY}" r="16" fill="url(#ultraB)" filter="url(#ultraGlow)" />
+                <text id="ultra-labelB" x="${sensorBX}" y="${sensorY-22}" text-anchor="middle" font-size="14" fill="#e67e22" font-weight="bold">B</text>
+                <!-- 距离L -->
+                <line id="ultra-line-L" x1="${sensorAX}" y1="${sensorY}" x2="${sensorBX}" y2="${sensorY}" stroke="#888" stroke-width="4" stroke-dasharray="10,6"/>
+                <rect x="${(sensorAX+sensorBX)/2-28}" y="${sensorY-32}" rx="8" ry="8" width="56" height="22" fill="#fff" fill-opacity="0.8"/>
+                <text x="${(sensorAX+sensorBX)/2}" y="${sensorY-16}" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">L=${L}m</text>
+                <!-- 信号路径 -->
+                <line x1="${sensorAX}" y1="${sensorY}" x2="${Sx}" y2="${sensorY}" stroke="#27ae60" stroke-width="3" stroke-dasharray="6,4"/>
+                <line x1="${sensorBX}" y1="${sensorY}" x2="${Sx}" y2="${sensorY}" stroke="#27ae60" stroke-width="3" stroke-dasharray="6,4"/>
+                <!-- 定位点S -->
+                <circle cx="${Sx}" cy="${sensorY}" r="10" fill="url(#ultraP)" filter="url(#ultraPulse)">
+                    <animate attributeName="r" values="10;16;10" dur="1.2s" repeatCount="indefinite"/>
+                </circle>
+                <rect x="${Sx-28}" y="${sensorY+16}" rx="8" ry="8" width="56" height="20" fill="#27ae60" fill-opacity="0.15"/>
+                <text x="${Sx}" y="${sensorY+30}" text-anchor="middle" font-size="13" fill="#27ae60" font-weight="bold">S=${S.toFixed(2)}m</text>
+                <!-- 速度V -->
+                <rect id="ultra-label-V" x="${sensorAX+10}" y="${centerY-10}" rx="8" ry="8" width="60" height="20" fill="#8e44ad" fill-opacity="0.12"/>
+                <text x="${sensorAX+40}" y="${centerY+4}" font-size="12" fill="#8e44ad">V=${V}m/s</text>
+                <!-- 时差T -->
+                <rect id="ultra-label-T" x="${(sensorAX+sensorBX)/2-28}" y="${centerY+10}" rx="8" ry="8" width="56" height="20" fill="#c0392b" fill-opacity="0.12"/>
+                <text x="${(sensorAX+sensorBX)/2}" y="${centerY+24}" text-anchor="middle" font-size="12" fill="#c0392b">T=${T}s</text>
+                <!-- 信号传播动画小圆点（S->A, S->B） -->
+                <circle id="ultra-anim-dotA" r="8" fill="#ffeb3b" stroke="#333" stroke-width="2" style="opacity:0.92;"/>
+                <circle id="ultra-anim-dotB" r="8" fill="#ffeb3b" stroke="#333" stroke-width="2" style="opacity:0.92;"/>
+            </svg>
+            `;
+            document.getElementById('ultraDiagram').innerHTML = svg;
+            animateUltraSignal(sensorAX, sensorY, Sx, sensorY, sensorBX, sensorY, 1800);
+            addUltraSvgTooltips();
+            bindUltraExportBtn();
+        }
+        // 信号传播动画：S->A, S->B
+        function animateUltraSignal(ax, ay, sx, sy, bx, by, baseDuration) {
+            const dotA = document.getElementById('ultra-anim-dotA');
+            const dotB = document.getElementById('ultra-anim-dotB');
+            if (!dotA || !dotB) return;
+            const distA = Math.hypot(ax-sx, ay-sy);
+            const distB = Math.hypot(bx-sx, by-sy);
+            let durationA = baseDuration * (distA < distB ? 0.7 : 1);
+            let durationB = baseDuration * (distB < distA ? 0.7 : 1);
+            if (distA === distB) durationA = durationB = baseDuration;
+            let start = null;
+            function step(ts) {
+                if (!start) start = ts;
+                let elapsed = ts - start;
+                let fracA = Math.min(elapsed / durationA, 1);
+                let fracB = Math.min(elapsed / durationB, 1);
+                dotA.setAttribute('cx', sx + (ax-sx)*fracA);
+                dotA.setAttribute('cy', sy + (ay-sy)*fracA);
+                dotB.setAttribute('cx', sx + (bx-sx)*fracB);
+                dotB.setAttribute('cy', sy + (by-by)*fracB);
+                if (fracA < 1 || fracB < 1) {
+                    requestAnimationFrame(step);
+                }
+            }
+            dotA.setAttribute('cx', sx);
+            dotA.setAttribute('cy', ay);
+            dotB.setAttribute('cx', sx);
+            dotB.setAttribute('cy', by);
+            requestAnimationFrame(step);
+        }
+
+        function drawTevDiagram({L, S1, S2, V, C, T, trigger, S}) {
+            const width = 500, height = 200;
+            const margin = 60;
+            const sensorAY = 70, sensorBY = 70;
+            const sensorAX = margin, sensorBX = width - margin;
+            const centerY = 140;
+            let Sx;
+            if (trigger === 'internal') {
+                Sx = sensorAX + (sensorBX - sensorAX) * (S / L);
+            } else {
+                Sx = sensorBX - (sensorBX - sensorAX) * (S / L);
+            }
+            if (Sx < sensorAX) Sx = sensorAX;
+            if (Sx > sensorBX) Sx = sensorBX;
+            const svg = `
+            <svg id="tev-svg" width="100%" height="${height}" viewBox="0 0 ${width} ${height}" style="max-width:100%;" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                    <radialGradient id="tevA" cx="50%" cy="50%" r="60%">
+                        <stop offset="0%" stop-color="#6dd5fa"/>
+                        <stop offset="100%" stop-color="#1a2a6c"/>
+                    </radialGradient>
+                    <radialGradient id="tevB" cx="50%" cy="50%" r="60%">
+                        <stop offset="0%" stop-color="#fbc2eb"/>
+                        <stop offset="100%" stop-color="#e67e22"/>
+                    </radialGradient>
+                    <radialGradient id="tevP" cx="50%" cy="50%" r="60%">
+                        <stop offset="0%" stop-color="#b2ff59"/>
+                        <stop offset="100%" stop-color="#27ae60"/>
+                    </radialGradient>
+                    <filter id="tevGlow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                    <filter id="tevPulse" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="6" result="blur"/>
+                        <feMerge>
+                            <feMergeNode in="blur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                    <marker id="tevArrow" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L8,4 L0,8 L2,4 Z" fill="#888" />
+                    </marker>
+                </defs>
+                <!-- 传感器A -->
+                <circle cx="${sensorAX}" cy="${sensorAY}" r="18" fill="url(#tevA)" filter="url(#tevGlow)" />
+                <text x="${sensorAX}" y="${sensorAY - 28}" text-anchor="middle" font-size="15" fill="#1a2a6c" font-weight="bold">A</text>
+                <!-- 传感器B -->
+                <circle cx="${sensorBX}" cy="${sensorBY}" r="18" fill="url(#tevB)" filter="url(#tevGlow)" />
+                <text x="${sensorBX}" y="${sensorBY - 28}" text-anchor="middle" font-size="15" fill="#e67e22" font-weight="bold">B</text>
+                <!-- 距离L -->
+                <line x1="${sensorAX}" y1="${sensorAY}" x2="${sensorBX}" y2="${sensorBY}" stroke="#888" stroke-width="4" stroke-dasharray="10,6"/>
+                <rect x="${(sensorAX+sensorBX)/2-32}" y="${sensorAY-32}" rx="8" ry="8" width="64" height="26" fill="#fff" fill-opacity="0.8"/>
+                <text x="${(sensorAX+sensorBX)/2}" y="${sensorAY-15}" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">L = ${L} m</text>
+                <!-- 电缆S1 -->
+                <line x1="${sensorAX}" y1="${sensorAY}" x2="${sensorAX}" y2="${centerY}" stroke="#3498db" stroke-width="3" marker-end="url(#tevArrow)" stroke-dasharray="6,4"/>
+                <rect x="${sensorAX-48}" y="${(sensorAY+centerY)/2-14}" rx="8" ry="8" width="46" height="22" fill="#3498db" fill-opacity="0.15"/>
+                <text x="${sensorAX-25}" y="${(sensorAY+centerY)/2+2}" text-anchor="middle" font-size="13" fill="#3498db">S1=${S1}m</text>
+                <!-- 电缆S2 -->
+                <line x1="${sensorBX}" y1="${sensorBY}" x2="${sensorBX}" y2="${centerY}" stroke="#e67e22" stroke-width="3" marker-end="url(#tevArrow)" stroke-dasharray="6,4"/>
+                <rect x="${sensorBX+2}" y="${(sensorBY+centerY)/2-14}" rx="8" ry="8" width="46" height="22" fill="#e67e22" fill-opacity="0.15"/>
+                <text x="${sensorBX+25}" y="${(sensorBY+centerY)/2+2}" text-anchor="middle" font-size="13" fill="#e67e22">S2=${S2}m</text>
+                <!-- 定位点S -->
+                <circle cx="${Sx}" cy="${sensorAY}" r="12" fill="url(#tevP)" filter="url(#tevPulse)">
+                    <animate attributeName="r" values="12;18;12" dur="1.2s" repeatCount="indefinite"/>
+                </circle>
+                <rect x="${Sx-32}" y="${sensorAY+18}" rx="8" ry="8" width="64" height="22" fill="#27ae60" fill-opacity="0.15"/>
+                <text x="${Sx}" y="${sensorAY+34}" text-anchor="middle" font-size="13" fill="#27ae60" font-weight="bold">S=${S.toFixed(2)}m</text>
+                <!-- 传播速度V、C、时差T标注 -->
+                <rect id="tev-label-V" x="${sensorAX+10}" y="${centerY+18}" rx="8" ry="8" width="60" height="20" fill="#8e44ad" fill-opacity="0.12"/>
+                <text x="${sensorAX+40}" y="${centerY+32}" font-size="12" fill="#8e44ad">V=${V}m/ns</text>
+                <rect id="tev-label-C" x="${sensorBX-70}" y="${centerY+18}" rx="8" ry="8" width="60" height="20" fill="#8e44ad" fill-opacity="0.12"/>
+                <text x="${sensorBX-40}" y="${centerY+32}" font-size="12" fill="#8e44ad">C=${C}m/ns</text>
+                <rect id="tev-label-T" x="${(sensorAX+sensorBX)/2-32}" y="${centerY+38}" rx="8" ry="8" width="64" height="20" fill="#c0392b" fill-opacity="0.12"/>
+                <text x="${(sensorAX+sensorBX)/2}" y="${centerY+52}" text-anchor="middle" font-size="12" fill="#c0392b">T=${T}ns</text>
+                <!-- 信号传播动画小圆点（S->A, S->B） -->
+                <circle id="tev-anim-dotA" r="8" fill="#ffeb3b" stroke="#333" stroke-width="2" style="opacity:0.92;"/>
+                <circle id="tev-anim-dotB" r="8" fill="#ffeb3b" stroke="#333" stroke-width="2" style="opacity:0.92;"/>
+            </svg>
+            `;
+            document.getElementById('tevDiagram').innerHTML = svg;
+            animateTevSignal(sensorAX, sensorAY, Sx, sensorAY, sensorBX, sensorBY, 1800);
+            addTevSvgTooltips();
+            bindTevExportBtn();
+        }
+        // 信号传播动画：S->A, S->B
+        function animateTevSignal(ax, ay, sx, sy, bx, by, baseDuration) {
+            const dotA = document.getElementById('tev-anim-dotA');
+            const dotB = document.getElementById('tev-anim-dotB');
+            if (!dotA || !dotB) return;
+            const distA = Math.hypot(ax-sx, ay-sy);
+            const distB = Math.hypot(bx-sx, by-sy);
+            let durationA = baseDuration * (distA < distB ? 0.7 : 1);
+            let durationB = baseDuration * (distB < distA ? 0.7 : 1);
+            if (distA === distB) durationA = durationB = baseDuration;
+            let start = null;
+            function step(ts) {
+                if (!start) start = ts;
+                let elapsed = ts - start;
+                let fracA = Math.min(elapsed / durationA, 1);
+                let fracB = Math.min(elapsed / durationB, 1);
+                dotA.setAttribute('cx', sx + (ax-sx)*fracA);
+                dotA.setAttribute('cy', sy + (ay-sy)*fracA);
+                dotB.setAttribute('cx', sx + (bx-sx)*fracB);
+                dotB.setAttribute('cy', sy + (by-by)*fracB);
+                if (fracA < 1 || fracB < 1) {
+                    requestAnimationFrame(step);
+                }
+            }
+            dotA.setAttribute('cx', sx);
+            dotA.setAttribute('cy', ay);
+            dotB.setAttribute('cx', sx);
+            dotB.setAttribute('cy', by);
+            requestAnimationFrame(step);
+        }
+
+        function drawHfDiagram({V, T, S}) {
+            const width = 600, height = 220;
+            const aX = 60, aY = 110;
+            const reflectX = width - 60;
+            const lineY = 110;
+            // S点在A和反射点之间按比例分布
+            let Sx;
+            if (S <= 0) {
+                Sx = aX;
+            } else {
+                Sx = aX + (reflectX - aX) * (S / (2 * S));
+            }
+            if (Sx < aX) Sx = aX;
+            if (Sx > reflectX) Sx = reflectX;
+            const svg = `
+            <svg id="hf-svg" width="100%" height="${height}" viewBox="0 0 ${width} ${height}" style="max-width:100%;" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                    <radialGradient id="hfA" cx="50%" cy="50%" r="60%">
+                        <stop offset="0%" stop-color="#6dd5fa"/>
+                        <stop offset="100%" stop-color="#1a2a6c"/>
+                    </radialGradient>
+                    <radialGradient id="hfSource" cx="50%" cy="50%" r="60%">
+                        <stop offset="0%" stop-color="#b2ff59"/>
+                        <stop offset="100%" stop-color="#27ae60"/>
+                    </radialGradient>
+                    <filter id="hfGlow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                    <filter id="hfPulse" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="6" result="blur"/>
+                        <feMerge>
+                            <feMergeNode in="blur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <!-- A点 -->
+                <circle id="hf-sensorA" cx="${aX}" cy="${aY}" r="24" fill="url(#hfA)" filter="url(#hfGlow)" />
+                <text id="hf-labelA" x="${aX}" y="${aY-36}" text-anchor="middle" font-size="20" fill="#1a2a6c" font-weight="bold">A</text>
+                <!-- 信号源 -->
+                <circle id="hf-pointS" cx="${Sx}" cy="${lineY}" r="18" fill="url(#hfSource)" filter="url(#hfPulse)">
+                    <animate attributeName="r" values="18;24;18" dur="1.2s" repeatCount="indefinite"/>
+                </circle>
+                <rect x="${Sx-36}" y="${lineY+24}" rx="10" ry="10" width="72" height="28" fill="#27ae60" fill-opacity="0.15"/>
+                <text x="${Sx}" y="${lineY+44}" text-anchor="middle" font-size="16" fill="#27ae60" font-weight="bold">信号源</text>
+                <!-- 反射点 -->
+                <circle id="hf-reflect" cx="${reflectX}" cy="${lineY}" r="24" fill="#e67e22" />
+                <text id="hf-labelReflect" x="${reflectX}" y="${lineY-36}" text-anchor="middle" font-size="20" fill="#e67e22" font-weight="bold">反射点</text>
+                <!-- 信号路径 -->
+                <line x1="${aX}" y1="${aY}" x2="${reflectX}" y2="${lineY}" stroke="#888" stroke-width="4" stroke-dasharray="10,6"/>
+                <!-- S为信号源到反射点的距离 -->
+                <rect x="${Sx+((reflectX-Sx)/2)-36}" y="${lineY-48}" rx="10" ry="10" width="72" height="28" fill="#27ae60" fill-opacity="0.15"/>
+                <text x="${Sx+((reflectX-Sx)/2)}" y="${lineY-30}" text-anchor="middle" font-size="16" fill="#27ae60" font-weight="bold">S=${S.toFixed(2)}m</text>
+                <!-- 速度V -->
+                <rect id="hf-label-V" x="${aX+10}" y="${lineY+28}" rx="8" ry="8" width="60" height="20" fill="#8e44ad" fill-opacity="0.12"/>
+                <text x="${aX+40}" y="${lineY+42}" font-size="12" fill="#8e44ad">V=${V}m/ns</text>
+                <!-- 时差T -->
+                <rect id="hf-label-T" x="${(aX+reflectX)/2-28}" y="${lineY+10}" rx="8" ry="8" width="56" height="20" fill="#c0392b" fill-opacity="0.12"/>
+                <text x="${(aX+reflectX)/2}" y="${lineY+24}" text-anchor="middle" font-size="12" fill="#c0392b">T=${T}ns</text>
+                <!-- 信号传播动画小圆点（S->A, S->反射点） -->
+                <circle id="hf-anim-dotA" r="12" fill="#ffeb3b" stroke="#333" stroke-width="2" style="opacity:0.92;"/>
+                <circle id="hf-anim-dotB" r="12" fill="#ffeb3b" stroke="#333" stroke-width="2" style="opacity:0.92;"/>
+            </svg>
+            `;
+            document.getElementById('hfDiagram').innerHTML = svg;
+            animateHfSignal(aX, aY, Sx, lineY, reflectX, lineY, 1800);
+            addHfSvgTooltips();
+            bindHfExportBtn();
+        }
+        // 信号传播动画：S->A, S->反射点
+        function animateHfSignal(ax, ay, sx, sy, rx, ry, baseDuration) {
+            const dotA = document.getElementById('hf-anim-dotA');
+            const dotB = document.getElementById('hf-anim-dotB');
+            let dotReflectBack = document.getElementById('hf-anim-dotReflectBack');
+            if (!dotA || !dotB) return;
+            const distA = Math.hypot(ax-sx, ay-sy);
+            const distB = Math.hypot(rx-sx, ry-sy);
+            let durationA = baseDuration * (distA < distB ? 0.7 : 1);
+            let durationB = baseDuration * (distB < distA ? 0.7 : 1);
+            if (distA === distB) durationA = durationB = baseDuration;
+            let phase = 0;
+            let start = null;
+            function step(ts) {
+                if (!start) start = ts;
+                let elapsed = ts - start;
+                if (phase === 0) {
+                    let fracA = Math.min(elapsed / durationA, 1);
+                    let fracB = Math.min(elapsed / durationB, 1);
+                    dotA.setAttribute('cx', sx + (ax-sx)*fracA);
+                    dotA.setAttribute('cy', sy + (ay-ay)*fracA);
+                    dotB.setAttribute('cx', sx + (rx-sx)*fracB);
+                    dotB.setAttribute('cy', sy + (ry-ry)*fracB);
+                    if (fracA < 1 || fracB < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        phase = 1;
+                        start = performance.now();
+                        if (!dotReflectBack) {
+                            dotReflectBack = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                            dotReflectBack.setAttribute('id', 'hf-anim-dotReflectBack');
+                            dotReflectBack.setAttribute('r', '8');
+                            dotReflectBack.setAttribute('fill', '#e67e22');
+                            dotReflectBack.setAttribute('stroke', '#333');
+                            dotReflectBack.setAttribute('stroke-width', '2');
+                            dotReflectBack.setAttribute('style', 'opacity:0.92;');
+                            dotB.parentNode.appendChild(dotReflectBack);
+                        }
+                        dotReflectBack.setAttribute('cx', rx);
+                        dotReflectBack.setAttribute('cy', ry);
+                        requestAnimationFrame(step);
+                    }
+                } else if (phase === 1) {
+                    let frac = Math.min((performance.now() - start) / baseDuration, 1);
+                    dotReflectBack.setAttribute('cx', rx + (ax-rx)*frac);
+                    dotReflectBack.setAttribute('cy', ry + (ay-ry)*frac);
+                    if (frac < 1) {
+                        requestAnimationFrame(step);
+                    }
+                }
+            }
+            dotA.setAttribute('cx', sx);
+            dotA.setAttribute('cy', sy);
+            dotB.setAttribute('cx', sx);
+            dotB.setAttribute('cy', sy);
+            if (dotReflectBack) {
+                dotReflectBack.setAttribute('cx', rx);
+                dotReflectBack.setAttribute('cy', ry);
+            }
+            requestAnimationFrame(step);
+        }
+
+        // ========== 声电联合参数高亮/校验/气泡/导出/参数组 ==========
+        function addAeInputHighlight() {
+            [
+                {id:'aeV', svg:'ae-label-V', tip:'V: 传播速度'},
+                {id:'aeT', svg:'ae-label-T', tip:'T: 时差'}
+            ].forEach(({id,svg,tip}) => {
+                const el = document.getElementById(id);
+                if (el && !el._aeBound) {
+                    el.addEventListener('input', () => {
+                        highlightSvgElement(svg);
+                        validateAeInputs();
+                    });
+                    el._aeBound = true;
+                }
+            });
+            validateAeInputs();
+        }
+        function validateAeInputs() {
+            const rules = [
+                {id:'aeV', svg:'ae-label-V', name:'V', check:v=>v>0, msg:'V必须大于0'},
+                {id:'aeT', svg:'ae-label-T', name:'T', check:v=>v>=0, msg:'T不能小于0'}
+            ];
+            rules.forEach(({id,svg,check,msg}) => {
+                const input = document.getElementById(id);
+                if (!input) return;
+                input.classList.remove('error');
+                let tip = input.nextElementSibling;
+                if (tip && tip.classList.contains('input-error-tip')) tip.remove();
+                const svgEl = document.getElementById(svg);
+                if (svgEl) svgEl.classList.remove('svg-error');
+                const val = parseFloat(input.value);
+                if (!check(val)) {
+                    input.classList.add('error');
+                    const err = document.createElement('div');
+                    err.className = 'input-error-tip';
+                    err.textContent = msg;
+                    input.parentNode.appendChild(err);
+                    if (svgEl) svgEl.classList.add('svg-error');
+                }
+            });
+        }
+        // 气泡说明
+        function addAeSvgTooltips() {
+            const tips = {
+                'ae-sensorA': 'A点\n超声波传感器',
+                'ae-sensorB': 'B点\n特高频/高频电流传感器',
+                'ae-pointS': 'S\n信号源定位点',
+                'ae-label-V': 'V\n传播速度',
+                'ae-label-T': 'T\n时差',
+            };
+            Object.entries(tips).forEach(([id, tip]) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('mouseenter', e => {
+                        showTooltip(tip, e.clientX, e.clientY);
+                    });
+                    el.addEventListener('mouseleave', hideTooltip);
+                }
+            });
+        }
+        // 导出图片
+        function bindAeExportBtn() {
+            const btn = document.getElementById('aeExportBtn');
+            const svgEl = document.getElementById('ae-svg');
+            if (!btn || !svgEl) return;
+            btn.onclick = function() {
+                const clone = svgEl.cloneNode(true);
+                clone.querySelectorAll('#ae-anim-dot').forEach(e=>e.remove());
+                const serializer = new XMLSerializer();
+                const svgStr = serializer.serializeToString(clone);
+                const img = new window.Image();
+                const svg64 = btoa(unescape(encodeURIComponent(svgStr)));
+                const image64 = 'data:image/svg+xml;base64,' + svg64;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = svgEl.viewBox.baseVal.width;
+                    canvas.height = svgEl.viewBox.baseVal.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(0,0,canvas.width,canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                    const url = canvas.toDataURL('image/png');
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = '声电联合定位图.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                };
+                img.src = image64;
+            };
+        }
+        // 参数组保存与切换
+        const AE_GROUP_KEY = 'ae_param_groups_v1';
+        function getAeParams() {
+            return {
+                V: document.getElementById('aeV').value,
+                T: document.getElementById('aeT').value
+            };
+        }
+        function setAeParams(params) {
+            document.getElementById('aeV').value = params.V;
+            document.getElementById('aeT').value = params.T;
+        }
+        function loadAeGroups() {
+            let groups = [];
+            try {
+                groups = JSON.parse(localStorage.getItem(AE_GROUP_KEY)) || [];
+            } catch(e) {}
+            return groups;
+        }
+        function saveAeGroups(groups) {
+            localStorage.setItem(AE_GROUP_KEY, JSON.stringify(groups));
+        }
+        function refreshAeGroupSelect() {
+            const select = document.getElementById('aeGroupSelect');
+            const groups = loadAeGroups();
+            select.innerHTML = '';
+            groups.forEach((g, i) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = g.name || `参数组${i+1}`;
+                select.appendChild(opt);
+            });
+            if (groups.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = '';
+                opt.textContent = '无参数组';
+                select.appendChild(opt);
+            }
+        }
+        function bindAeGroupEvents() {
+            const saveBtn = document.getElementById('aeSaveGroupBtn');
+            const select = document.getElementById('aeGroupSelect');
+            const delBtn = document.getElementById('aeDeleteGroupBtn');
+            saveBtn.onclick = function() {
+                const name = prompt('请输入参数组名称（可选）');
+                if (!name) return;
+                const groups = loadAeGroups();
+                if (groups.some(g => g.name === name)) {
+                    alert('参数组名称已存在，请更换名称！');
+                    return;
+                }
+                const params = getAeParams();
+                groups.push({ ...params, name });
+                localStorage.setItem('ae_param_groups_v1', JSON.stringify(groups));
+                refreshAeGroupSelect();
+                select.value = groups.length-1;
+            };
+            select.onchange = function() {
+                const idx = select.value;
+                const groups = loadAeGroups();
+                if (groups[idx]) {
+                    setAeParams(groups[idx]);
+                    initPositioningCalculators();
+                }
+            };
+            delBtn.onclick = function() {
+                const idx = select.value;
+                let groups = loadAeGroups();
+                if (groups[idx]) {
+                    if (confirm('确定要删除该参数组吗？')) {
+                        groups.splice(idx, 1);
+                        saveAeGroups(groups);
+                        refreshAeGroupSelect();
+                        if (groups[0]) {
+                            setAeParams(groups[0]);
+                            initPositioningCalculators();
+                            select.value = 0;
+                        }
+                    }
+                }
+            };
+        }
+        // ========== 声电联合SVG绘制与动画增强 ==========
+        function drawAeDiagram({V, T, S}) {
+            // 统一SVG尺寸与特高频定位
+            const width = 600, height = 220;
+            const margin = 60;
+            const sensorAX = margin;
+            const centerY = 110;
+            // B点始终在最右侧
+            let Bx = width - margin;
+            // S点最多只能到B点左侧150像素
+            let minGap = 150;
+            let Sx;
+            if (S <= 0) {
+                Sx = sensorAX;
+            } else if (S >= (Bx - sensorAX)) {
+                Sx = Bx - minGap;
+            } else {
+                Sx = sensorAX + (Bx - sensorAX) * (S / (V * T > 0 ? V * T : (Bx - sensorAX)));
+                if (Sx > Bx - minGap) Sx = Bx - minGap;
+            }
+            const sensorRadius = 18;
+            const sRadius = 12;
+            const labelFont = 15;
+            const sLabelFont = 13;
+            const bLabelFont = 15;
+            const svg = `
+            <svg id="ae-svg" width="100%" height="${height}" viewBox="0 0 ${width} ${height}" style="max-width:100%;" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                    <radialGradient id="aeA" cx="50%" cy="50%" r="60%">
+                        <stop offset="0%" stop-color="#6dd5fa"/>
+                        <stop offset="100%" stop-color="#1a2a6c"/>
+                    </radialGradient>
+                    <radialGradient id="aeB" cx="50%" cy="50%" r="60%">
+                        <stop offset="0%" stop-color="#fbc2eb"/>
+                        <stop offset="100%" stop-color="#e67e22"/>
+                    </radialGradient>
+                    <radialGradient id="aeP" cx="50%" cy="50%" r="60%">
+                        <stop offset="0%" stop-color="#b2ff59"/>
+                        <stop offset="100%" stop-color="#27ae60"/>
+                    </radialGradient>
+                    <filter id="aeGlow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                    <filter id="aePulse" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="6" result="blur"/>
+                        <feMerge>
+                            <feMergeNode in="blur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <!-- A点(超声波) -->
+                <circle id="ae-sensorA" cx="${sensorAX}" cy="${centerY}" r="${sensorRadius}" fill="url(#aeA)" filter="url(#aeGlow)" />
+                <text id="ae-labelA" x="${sensorAX}" y="${centerY-28}" text-anchor="middle" font-size="${labelFont}" fill="#1a2a6c" font-weight="bold">A</text>
+                <!-- B点(特高频/高频电流) -->
+                <circle id="ae-sensorB" cx="${Bx}" cy="${centerY}" r="${sensorRadius}" fill="url(#aeB)" filter="url(#aeGlow)" />
+                <text id="ae-labelB" x="${Bx}" y="${centerY-28}" text-anchor="middle" font-size="${bLabelFont}" fill="#e67e22" font-weight="bold">B</text>
+                <!-- 距离线 -->
+                <line x1="${sensorAX}" y1="${centerY}" x2="${Bx}" y2="${centerY}" stroke="#888" stroke-width="4" stroke-dasharray="10,6"/>
+                <!-- S点 -->
+                <circle id="ae-pointS" cx="${Sx}" cy="${centerY}" r="${sRadius}" fill="url(#aeP)" filter="url(#aePulse)">
+                    <animate attributeName="r" values="${sRadius};18;${sRadius}" dur="1.2s" repeatCount="indefinite"/>
+                </circle>
+                <rect x="${Sx-32}" y="${centerY+18}" rx="8" ry="8" width="64" height="22" fill="#27ae60" fill-opacity="0.15"/>
+                <text x="${Sx}" y="${centerY+34}" text-anchor="middle" font-size="${sLabelFont}" fill="#27ae60" font-weight="bold">S=${S.toFixed(2)}m</text>
+                <!-- 速度V -->
+                <rect id="ae-label-V" x="${sensorAX+10}" y="${centerY+18}" rx="8" ry="8" width="60" height="20" fill="#8e44ad" fill-opacity="0.12"/>
+                <text x="${sensorAX+40}" y="${centerY+32}" font-size="12" fill="#8e44ad">V=${V}m/s</text>
+                <!-- 时差T -->
+                <rect id="ae-label-T" x="${(sensorAX+Bx)/2-28}" y="${centerY+38}" rx="8" ry="8" width="56" height="20" fill="#c0392b" fill-opacity="0.12"/>
+                <text x="${(sensorAX+Bx)/2}" y="${centerY+52}" text-anchor="middle" font-size="12" fill="#c0392b">T=${T}s</text>
+                <!-- 信号传播动画小圆点（S->A, S->B） -->
+                <circle id="ae-anim-dotA" r="8" fill="#ffeb3b" stroke="#333" stroke-width="2" style="opacity:0.92;"/>
+                <circle id="ae-anim-dotB" r="8" fill="#ffeb3b" stroke="#333" stroke-width="2" style="opacity:0.92;"/>
+            </svg>
+            `;
+            document.getElementById('aeDiagram').innerHTML = svg;
+            animateAeSignal(sensorAX, centerY, Sx, centerY, Bx, centerY, 1800);
+            addAeSvgTooltips();
+            bindAeExportBtn();
+        }
+
+        // 声电联合动画：B点气泡始终先到达
+        function animateAeSignal(ax, ay, sx, sy, bx, by, baseDuration) {
+            const dotA = document.getElementById('ae-anim-dotA');
+            const dotB = document.getElementById('ae-anim-dotB');
+            if (!dotA || !dotB) return;
+            // B点动画时间短，A点长
+            const durationB = baseDuration * 0.6;
+            const durationA = baseDuration * 1.2;
+            let start = null;
+            function step(ts) {
+                if (!start) start = ts;
+                let elapsed = ts - start;
+                let fracB = Math.min(elapsed / durationB, 1);
+                let fracA = Math.min(elapsed / durationA, 1);
+                dotB.setAttribute('cx', sx + (bx-sx)*fracB);
+                dotB.setAttribute('cy', sy + (by-by)*fracB);
+                dotA.setAttribute('cx', sx + (ax-sx)*fracA);
+                dotA.setAttribute('cy', sy + (ay-ay)*fracA);
+                if (fracA < 1 || fracB < 1) {
+                    requestAnimationFrame(step);
+                }
+            }
+            dotA.setAttribute('cx', sx);
+            dotA.setAttribute('cy', ay);
+            dotB.setAttribute('cx', sx);
+            dotB.setAttribute('cy', by);
+            requestAnimationFrame(step);
+        }
+
+        function addUltraSvgTooltips() {
+            const tips = {
+                'ultra-sensorA': 'A点\n超声波传感器',
+                'ultra-sensorB': 'B点\n超声波传感器',
+                'ultra-pointS': 'S\n信号源定位点',
+                'ultra-line-L': 'L\n两传感器间距离',
+                'ultra-label-V': 'V\n金属表面传播速度',
+                'ultra-label-T': 'T\n时差',
+            };
+            Object.entries(tips).forEach(([id, tip]) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('mouseenter', e => {
+                        showTooltip(tip, e.clientX, e.clientY);
+                    });
+                    el.addEventListener('mouseleave', hideTooltip);
+                }
+            });
+        }
+
+        function bindUltraExportBtn() {
+            const btn = document.getElementById('ultraExportBtn');
+            const svgEl = document.getElementById('ultra-svg');
+            if (!btn || !svgEl) return;
+            btn.onclick = function() {
+                const clone = svgEl.cloneNode(true);
+                clone.querySelectorAll('#ultra-anim-dotA,#ultra-anim-dotB').forEach(e=>e.remove());
+                const serializer = new XMLSerializer();
+                const svgStr = serializer.serializeToString(clone);
+                const img = new window.Image();
+                const svg64 = btoa(unescape(encodeURIComponent(svgStr)));
+                const image64 = 'data:image/svg+xml;base64,' + svg64;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = svgEl.viewBox.baseVal.width;
+                    canvas.height = svgEl.viewBox.baseVal.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(0,0,canvas.width,canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                    const url = canvas.toDataURL('image/png');
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = '超声波定位图.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                };
+                img.src = image64;
+            };
+        }
+
+        function addTevSvgTooltips() {
+            const tips = {
+                'tev-sensorA': 'A点\n内置传感器',
+                'tev-sensorB': 'B点\n外置传感器',
+                'tev-pointS': 'S\n信号源定位点',
+                'tev-cable-S1': 'S1\n内置传感器电缆',
+                'tev-cable-S2': 'S2\n外置传感器电缆',
+                'tev-line-L': 'L\n两传感器间距离',
+                'tev-label-V': 'V\n电缆传播速度',
+                'tev-label-C': 'C\n传播速度',
+                'tev-label-T': 'T\n时差',
+            };
+            Object.entries(tips).forEach(([id, tip]) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('mouseenter', e => {
+                        showTooltip(tip, e.clientX, e.clientY);
+                    });
+                    el.addEventListener('mouseleave', hideTooltip);
+                }
+            });
+        }
+
+        function bindTevExportBtn() {
+            const btn = document.getElementById('tevExportBtn');
+            const svgEl = document.getElementById('tev-svg');
+            if (!btn || !svgEl) return;
+            btn.onclick = function() {
+                const clone = svgEl.cloneNode(true);
+                clone.querySelectorAll('#tev-anim-dotA,#tev-anim-dotB').forEach(e=>e.remove());
+                const serializer = new XMLSerializer();
+                const svgStr = serializer.serializeToString(clone);
+                const img = new window.Image();
+                const svg64 = btoa(unescape(encodeURIComponent(svgStr)));
+                const image64 = 'data:image/svg+xml;base64,' + svg64;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = svgEl.viewBox.baseVal.width;
+                    canvas.height = svgEl.viewBox.baseVal.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(0,0,canvas.width,canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                    const url = canvas.toDataURL('image/png');
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = '地电压定位图.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                };
+                img.src = image64;
+            };
+        }
+
+        function refreshUhfGroupSelect() {
+            const select = document.getElementById('uhfGroupSelect');
+            const groups = loadUhfGroups();
+            select.innerHTML = '';
+            groups.forEach((g, i) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = g.name || `参数组${i+1}`;
+                select.appendChild(opt);
+            });
+            if (groups.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = '';
+                opt.textContent = '无参数组';
+                select.appendChild(opt);
+            }
+        }
+
+        function loadUhfGroups() {
+            let groups = [];
+            try {
+                groups = JSON.parse(localStorage.getItem('uhf_param_groups_v1')) || [];
+            } catch(e) {}
+            return groups;
+        }
+
+        function bindUhfGroupEvents() {
+            const saveBtn = document.getElementById('uhfSaveGroupBtn');
+            const select = document.getElementById('uhfGroupSelect');
+            const delBtn = document.getElementById('uhfDeleteGroupBtn');
+            saveBtn.onclick = function() {
+                const name = prompt('请输入参数组名称（可选）');
+                if (!name) return;
+                const groups = loadUhfGroups();
+                if (groups.some(g => g.name === name)) {
+                    alert('参数组名称已存在，请更换名称！');
+                    return;
+                }
+                const params = getUhfParams();
+                groups.push({ ...params, name });
+                localStorage.setItem('uhf_param_groups_v1', JSON.stringify(groups));
+                refreshUhfGroupSelect();
+                select.value = groups.length-1;
+            };
+            select.onchange = function() {
+                const idx = select.value;
+                const groups = loadUhfGroups();
+                if (groups[idx]) {
+                    setUhfParams(groups[idx]);
+                    initPositioningCalculators();
+                }
+            };
+            delBtn.onclick = function() {
+                const idx = select.value;
+                let groups = loadUhfGroups();
+                if (groups[idx]) {
+                    if (confirm('确定要删除该参数组吗？')) {
+                        groups.splice(idx, 1);
+                        localStorage.setItem('uhf_param_groups_v1', JSON.stringify(groups));
+                        refreshUhfGroupSelect();
+                        if (groups[0]) {
+                            setUhfParams(groups[0]);
+                            initPositioningCalculators();
+                            select.value = 0;
+                        }
+                    }
+                }
+            };
+        }
+
+        function addUltraInputHighlight() {
+            [
+                {id:'ultraL', svg:'ultra-line-L', tip:'L: 两传感器间距离'},
+                {id:'ultraV', svg:'ultra-label-V', tip:'V: 金属表面传播速度'},
+                {id:'ultraT', svg:'ultra-label-T', tip:'T: 时差'},
+                {id:'ultraTrigger', svg:'ultra-sensorA', tip:'先触发传感器'}
+            ].forEach(({id,svg,tip}) => {
+                const el = document.getElementById(id);
+                if (el && !el._ultraBound) {
+                    el.addEventListener('input', () => {
+                        highlightSvgElement(svg);
+                        if (typeof validateUltraInputs === 'function') validateUltraInputs();
+                    });
+                    el._ultraBound = true;
+                }
+            });
+            if (typeof validateUltraInputs === 'function') validateUltraInputs();
+        }
+
+        function refreshUltraGroupSelect() {
+            const select = document.getElementById('ultraGroupSelect');
+            const groups = loadUltraGroups();
+            select.innerHTML = '';
+            groups.forEach((g, i) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = g.name || `参数组${i+1}`;
+                select.appendChild(opt);
+            });
+            if (groups.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = '';
+                opt.textContent = '无参数组';
+                select.appendChild(opt);
+            }
+        }
+
+        function loadUltraGroups() {
+            let groups = [];
+            try {
+                groups = JSON.parse(localStorage.getItem('ultra_param_groups_v1')) || [];
+            } catch(e) {}
+            return groups;
+        }
+
+        function addHfSvgTooltips() {
+            const tips = {
+                'hf-sensorA': 'A点',
+                'hf-pointS': 'S\n信号源定位点',
+                'hf-reflect': '反射点',
+                'hf-label-V': 'V\n传播速度',
+                'hf-label-T': 'T\n时差',
+            };
+            Object.entries(tips).forEach(([id, tip]) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('mouseenter', e => {
+                        showTooltip(tip, e.clientX, e.clientY);
+                    });
+                    el.addEventListener('mouseleave', hideTooltip);
+                }
+            });
+        }
+
+        function bindHfExportBtn() {
+            const btn = document.getElementById('hfExportBtn');
+            const svgEl = document.getElementById('hf-svg');
+            if (!btn || !svgEl) return;
+            btn.onclick = function() {
+                // 克隆SVG节点，去除动画点
+                const clone = svgEl.cloneNode(true);
+                // 可选：移除动画点（不导出动画）
+                clone.querySelectorAll('#hf-anim-dotA,#hf-anim-dotB,#hf-anim-dotReflectBack').forEach(e=>e.remove());
+                // 序列化SVG
+                const serializer = new XMLSerializer();
+                const svgStr = serializer.serializeToString(clone);
+                // 创建图片
+                const img = new window.Image();
+                const svg64 = btoa(unescape(encodeURIComponent(svgStr)));
+                const image64 = 'data:image/svg+xml;base64,' + svg64;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = svgEl.viewBox.baseVal.width;
+                    canvas.height = svgEl.viewBox.baseVal.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(0,0,canvas.width,canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                    const url = canvas.toDataURL('image/png');
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = '高频反射定位图.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                };
+                img.src = image64;
+            };
+        }
+
+        // ========== 特高频参数组相关 ==========
+        function getUhfParams() {
+            return {
+                L: document.getElementById('uhfL').value,
+                S1: document.getElementById('uhfS1').value,
+                S2: document.getElementById('uhfS2').value,
+                V: document.getElementById('uhfV').value,
+                C: document.getElementById('uhfC').value,
+                T: document.getElementById('uhfT').value,
+                trigger: document.getElementById('uhfTrigger').value
+            };
+        }
+        function setUhfParams(params) {
+            document.getElementById('uhfL').value = params.L;
+            document.getElementById('uhfS1').value = params.S1;
+            document.getElementById('uhfS2').value = params.S2;
+            document.getElementById('uhfV').value = params.V;
+            document.getElementById('uhfC').value = params.C;
+            document.getElementById('uhfT').value = params.T;
+            document.getElementById('uhfTrigger').value = params.trigger;
+        }
+        function bindUhfGroupEvents() {
+            const saveBtn = document.getElementById('uhfSaveGroupBtn');
+            const select = document.getElementById('uhfGroupSelect');
+            const delBtn = document.getElementById('uhfDeleteGroupBtn');
+            saveBtn.onclick = function() {
+                const name = prompt('请输入参数组名称（可选）');
+                if (!name) return;
+                const groups = loadUhfGroups();
+                if (groups.some(g => g.name === name)) {
+                    alert('参数组名称已存在，请更换名称！');
+                    return;
+                }
+                const params = getUhfParams();
+                groups.push({ ...params, name });
+                localStorage.setItem('uhf_param_groups_v1', JSON.stringify(groups));
+                refreshUhfGroupSelect();
+                select.value = groups.length-1;
+            };
+            select.onchange = function() {
+                const idx = select.value;
+                const groups = loadUhfGroups();
+                if (groups[idx]) {
+                    setUhfParams(groups[idx]);
+                    initPositioningCalculators();
+                }
+            };
+            delBtn.onclick = function() {
+                const idx = select.value;
+                let groups = loadUhfGroups();
+                if (groups[idx]) {
+                    if (confirm('确定要删除该参数组吗？')) {
+                        groups.splice(idx, 1);
+                        localStorage.setItem('uhf_param_groups_v1', JSON.stringify(groups));
+                        refreshUhfGroupSelect();
+                        if (groups[0]) {
+                            setUhfParams(groups[0]);
+                            initPositioningCalculators();
+                            select.value = 0;
+                        }
+                    }
+                }
+            };
+        }
+        // ========== 超声波参数组相关 ==========
+        function getUltraParams() {
+            return {
+                L: document.getElementById('ultraL').value,
+                V: document.getElementById('ultraV').value,
+                T: document.getElementById('ultraT').value,
+                trigger: document.getElementById('ultraTrigger').value
+            };
+        }
+        function setUltraParams(params) {
+            document.getElementById('ultraL').value = params.L;
+            document.getElementById('ultraV').value = params.V;
+            document.getElementById('ultraT').value = params.T;
+            document.getElementById('ultraTrigger').value = params.trigger;
+        }
+        function bindUltraGroupEvents() {
+            const saveBtn = document.getElementById('ultraSaveGroupBtn');
+            const select = document.getElementById('ultraGroupSelect');
+            const delBtn = document.getElementById('ultraDeleteGroupBtn');
+            saveBtn.onclick = function() {
+                const name = prompt('请输入参数组名称（可选）');
+                if (!name) return;
+                const groups = loadUltraGroups();
+                if (groups.some(g => g.name === name)) {
+                    alert('参数组名称已存在，请更换名称！');
+                    return;
+                }
+                const params = getUltraParams();
+                groups.push({ ...params, name });
+                localStorage.setItem('ultra_param_groups_v1', JSON.stringify(groups));
+                refreshUltraGroupSelect();
+                select.value = groups.length-1;
+            };
+            select.onchange = function() {
+                const idx = select.value;
+                const groups = loadUltraGroups();
+                if (groups[idx]) {
+                    setUltraParams(groups[idx]);
+                    initPositioningCalculators();
+                }
+            };
+            delBtn.onclick = function() {
+                const idx = select.value;
+                let groups = loadUltraGroups();
+                if (groups[idx]) {
+                    if (confirm('确定要删除该参数组吗？')) {
+                        groups.splice(idx, 1);
+                        localStorage.setItem('ultra_param_groups_v1', JSON.stringify(groups));
+                        refreshUltraGroupSelect();
+                        if (groups[0]) {
+                            setUltraParams(groups[0]);
+                            initPositioningCalculators();
+                            select.value = 0;
+                        }
+                    }
+                }
+            };
+        }
+        // ========== 地电压参数组相关 ==========
+        function getTevParams() {
+            return {
+                L: document.getElementById('tevL').value,
+                S1: document.getElementById('tevS1').value,
+                S2: document.getElementById('tevS2').value,
+                V: document.getElementById('tevV').value,
+                C: document.getElementById('tevC').value,
+                T: document.getElementById('tevT').value,
+                trigger: document.getElementById('tevTrigger').value
+            };
+        }
+        function setTevParams(params) {
+            document.getElementById('tevL').value = params.L;
+            document.getElementById('tevS1').value = params.S1;
+            document.getElementById('tevS2').value = params.S2;
+            document.getElementById('tevV').value = params.V;
+            document.getElementById('tevC').value = params.C;
+            document.getElementById('tevT').value = params.T;
+            document.getElementById('tevTrigger').value = params.trigger;
+        }
+        function bindTevGroupEvents() {
+            const saveBtn = document.getElementById('tevSaveGroupBtn');
+            const select = document.getElementById('tevGroupSelect');
+            const delBtn = document.getElementById('tevDeleteGroupBtn');
+            saveBtn.onclick = function() {
+                const name = prompt('请输入参数组名称（可选）');
+                if (!name) return;
+                const groups = loadTevGroups();
+                if (groups.some(g => g.name === name)) {
+                    alert('参数组名称已存在，请更换名称！');
+                    return;
+                }
+                const params = getTevParams();
+                groups.push({ ...params, name });
+                localStorage.setItem('tev_param_groups_v1', JSON.stringify(groups));
+                refreshTevGroupSelect();
+                select.value = groups.length-1;
+            };
+            select.onchange = function() {
+                const idx = select.value;
+                const groups = loadTevGroups();
+                if (groups[idx]) {
+                    setTevParams(groups[idx]);
+                    initPositioningCalculators();
+                }
+            };
+            delBtn.onclick = function() {
+                const idx = select.value;
+                let groups = loadTevGroups();
+                if (groups[idx]) {
+                    if (confirm('确定要删除该参数组吗？')) {
+                        groups.splice(idx, 1);
+                        localStorage.setItem('tev_param_groups_v1', JSON.stringify(groups));
+                        refreshTevGroupSelect();
+                        if (groups[0]) {
+                            setTevParams(groups[0]);
+                            initPositioningCalculators();
+                            select.value = 0;
+                        }
+                    }
+                }
+            };
+        }
+        // ========== 高频反射参数组相关 ==========
+        function getHfParams() {
+            return {
+                V: document.getElementById('hfV').value,
+                T: document.getElementById('hfT').value
+            };
+        }
+        function setHfParams(params) {
+            document.getElementById('hfV').value = params.V;
+            document.getElementById('hfT').value = params.T;
+        }
+        function bindHfGroupEvents() {
+            const saveBtn = document.getElementById('hfSaveGroupBtn');
+            const select = document.getElementById('hfGroupSelect');
+            const delBtn = document.getElementById('hfDeleteGroupBtn');
+            saveBtn.onclick = function() {
+                const name = prompt('请输入参数组名称（可选）');
+                if (!name) return;
+                const groups = loadHfGroups();
+                if (groups.some(g => g.name === name)) {
+                    alert('参数组名称已存在，请更换名称！');
+                    return;
+                }
+                const params = getHfParams();
+                groups.push({ ...params, name });
+                localStorage.setItem('hf_param_groups_v1', JSON.stringify(groups));
+                refreshHfGroupSelect();
+                select.value = groups.length-1;
+            };
+            select.onchange = function() {
+                const idx = select.value;
+                const groups = loadHfGroups();
+                if (groups[idx]) {
+                    setHfParams(groups[idx]);
+                    initPositioningCalculators();
+                }
+            };
+            delBtn.onclick = function() {
+                const idx = select.value;
+                let groups = loadHfGroups();
+                if (groups[idx]) {
+                    if (confirm('确定要删除该参数组吗？')) {
+                        groups.splice(idx, 1);
+                        localStorage.setItem('hf_param_groups_v1', JSON.stringify(groups));
+                        refreshHfGroupSelect();
+                        if (groups[0]) {
+                            setHfParams(groups[0]);
+                            initPositioningCalculators();
+                            select.value = 0;
+                        }
+                    }
+                }
+            };
+        }
+        // ========== 地电压参数组存取 ==========
+        function loadTevGroups() {
+            let groups = [];
+            try {
+                groups = JSON.parse(localStorage.getItem('tev_param_groups_v1')) || [];
+            } catch(e) {}
+            return groups;
+        }
+        function saveTevGroups(groups) {
+            localStorage.setItem('tev_param_groups_v1', JSON.stringify(groups));
+        }
+        function refreshTevGroupSelect() {
+            const select = document.getElementById('tevGroupSelect');
+            const groups = loadTevGroups();
+            select.innerHTML = '';
+            groups.forEach((g, i) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = g.name || `参数组${i+1}`;
+                select.appendChild(opt);
+            });
+            if (groups.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = '';
+                opt.textContent = '无参数组';
+                select.appendChild(opt);
+            }
+        }
+        // ========== 高频反射参数组存取 ==========
+        function loadHfGroups() {
+            let groups = [];
+            try {
+                groups = JSON.parse(localStorage.getItem('hf_param_groups_v1')) || [];
+            } catch(e) {}
+            return groups;
+        }
+        function saveHfGroups(groups) {
+            localStorage.setItem('hf_param_groups_v1', JSON.stringify(groups));
+        }
+        function refreshHfGroupSelect() {
+            const select = document.getElementById('hfGroupSelect');
+            const groups = loadHfGroups();
+            select.innerHTML = '';
+            groups.forEach((g, i) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = g.name || `参数组${i+1}`;
+                select.appendChild(opt);
+            });
+            if (groups.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = '';
+                opt.textContent = '无参数组';
+                select.appendChild(opt);
+            }
+        }
+        // ========== 声电联合参数组存取 ==========
+        function loadAeGroups() {
+            let groups = [];
+            try {
+                groups = JSON.parse(localStorage.getItem('ae_param_groups_v1')) || [];
+            } catch(e) {}
+            return groups;
+        }
+        function saveAeGroups(groups) {
+            localStorage.setItem('ae_param_groups_v1', JSON.stringify(groups));
+        }
+        function refreshAeGroupSelect() {
+            const select = document.getElementById('aeGroupSelect');
+            const groups = loadAeGroups();
+            select.innerHTML = '';
+            groups.forEach((g, i) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = g.name || `参数组${i+1}`;
+                select.appendChild(opt);
+            });
+            if (groups.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = '';
+                opt.textContent = '无参数组';
+                select.appendChild(opt);
+            }
+        }
+
+        // ========== 地电压参数高亮 ==========
+        function addTevInputHighlight() {
+            [
+                {id:'tevL', svg:'tev-line-L', tip:'L: 两传感器间距离'},
+                {id:'tevS1', svg:'tev-cable-S1', tip:'S1: 内置传感器电缆长度'},
+                {id:'tevS2', svg:'tev-cable-S2', tip:'S2: 外置传感器电缆长度'},
+                {id:'tevV', svg:'tev-label-V', tip:'V: 电缆传播速度'},
+                {id:'tevC', svg:'tev-label-C', tip:'C: 传播速度'},
+                {id:'tevT', svg:'tev-label-T', tip:'T: 时差'},
+                {id:'tevTrigger', svg:'tev-sensorA', tip:'先触发传感器'}
+            ].forEach(({id,svg,tip}) => {
+                const el = document.getElementById(id);
+                if (el && !el._tevBound) {
+                    el.addEventListener('input', () => {
+                        highlightSvgElement(svg);
+                        // 可选：validateTevInputs()
+                    });
+                    el._tevBound = true;
+                }
+            });
+            // 可选：validateTevInputs()
+        }
+        // ========== 高频反射参数高亮 ==========
+        function addHfInputHighlight() {
+            [
+                {id:'hfV', svg:'hf-label-V', tip:'V: 传播速度'},
+                {id:'hfT', svg:'hf-label-T', tip:'T: 时差'}
+            ].forEach(({id,svg,tip}) => {
+                const el = document.getElementById(id);
+                if (el && !el._hfBound) {
+                    el.addEventListener('input', () => {
+                        highlightSvgElement(svg);
+                        // 可选：validateHfInputs()
+                    });
+                    el._hfBound = true;
+                }
+            });
+            // 可选：validateHfInputs()
+        }
+        // ========== 声电联合参数高亮 ==========
+        function addAeInputHighlight() {
+            [
+                {id:'aeV', svg:'ae-label-V', tip:'V: 传播速度'},
+                {id:'aeT', svg:'ae-label-T', tip:'T: 时差'}
+            ].forEach(({id,svg,tip}) => {
+                const el = document.getElementById(id);
+                if (el && !el._aeBound) {
+                    el.addEventListener('input', () => {
+                        highlightSvgElement(svg);
+                        // 可选：validateAeInputs()
+                    });
+                    el._aeBound = true;
+                }
+            });
+            // 可选：validateAeInputs()
+        }
+    </script>
+</body>
+</html>
