@@ -297,7 +297,15 @@
         }
         
         .formula-box {
-            display: none !important;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #555;
+            font-family: monospace;
+            border-left: 4px solid #3498db;
+            display: none; /* 隐藏公式显示 */
         }
         
         .voltage .formula-box {
@@ -764,19 +772,38 @@
                         </div>
                         
                         <div class="input-group">
-                            <label for="quantValue">量化值 (X):</label>
-                            <input type="number" id="quantValue" placeholder="输入量化值..." min="0" max="255" value="40">
+                            <label for="quantInputValue">输入值:</label>
+                            <input type="number" id="quantInputValue" placeholder="输入数值..." value="40">
+                        </div>
+                        
+                        <div class="input-row">
+                            <div class="input-column">
+                                <label for="quantFromType">从:</label>
+                                <select id="quantFromType">
+                                    <option value="quant">量化值</option>
+                                    <option value="amplitude">幅值</option>
+                                </select>
+                            </div>
+                            
+                            <div class="input-column">
+                                <label for="quantToType">转换为:</label>
+                                <select id="quantToType">
+                                    <option value="amplitude">幅值</option>
+                                    <option value="quant">量化值</option>
+                                </select>
+                            </div>
                         </div>
                         
                         <div class="result-box" id="quantResult">
-                            实际幅值: -75.3125
+                            结果将显示在这里
                         </div>
                         
                         <div class="formula-box">
                             <div class="formula-title">转换公式:</div>
                             <div>量化级数 = 2<sup>N</sup></div>
-                            <div>量化范围 = 0 ~ (2<sup>N</sup> - 1)</div>
-                            <div>幅值 = min + (max - min) / (2<sup>N</sup> - 1) * X</div>
+                             <div>量化范围 = 0 ~ 2<sup>N</sup>-1 </div>
+                             <div>幅值 = min + (max - min) * (X / 2<sup>N</sup>)</div>
+                             <div>X = (幅值 - min) * 2<sup>N</sup> / (max - min)</div>
                         </div>
                         
                         <div class="note">
@@ -1159,14 +1186,8 @@
     </div>
     
     <footer>
-        <p>电子工程计算工具 V3.0 &copy; 2025 | 集成单位换算与定位计算功能</p>
-        <div style="text-align:center;color:#888;font-size:0.98rem;margin-top:10px;">
-            版权所有 &copy; 苏凌霄，保留所有权利。<br>
-            本工具仅供学习与工程参考，禁止未经授权的商业用途。
-        </div>
-        </div>
+        <p>电子工程计算工具 V3.0 &copy; suh 2025 | 集成单位换算与定位计算功能</p>
     </footer>
-    
 
     <div class="custom-tooltip" id="customTooltip"></div>
 
@@ -1198,7 +1219,8 @@
                         initFieldConverter();
                     }
                     else if (id.includes('adcBits') || id.includes('minRange') || 
-                             id.includes('maxRange') || id.includes('quantValue')) {
+                             id.includes('maxRange') || id.includes('quantInputValue') ||
+                             id.includes('quantFromType') || id.includes('quantToType')) {
                         initQuantizeConverter();
                     }
                     else if (id.includes('uhf') || id.includes('ultra') || 
@@ -1455,7 +1477,9 @@
             const adcBits = parseInt(document.getElementById('adcBits').value) || 8;
             const minRange = parseFloat(document.getElementById('minRange').value) || 0;
             const maxRange = parseFloat(document.getElementById('maxRange').value) || 0;
-            let quantValue = parseInt(document.getElementById('quantValue').value) || 0;
+            const inputValue = parseFloat(document.getElementById('quantInputValue').value) || 0;
+            const fromType = document.getElementById('quantFromType').value;
+            const toType = document.getElementById('quantToType').value;
             
             // 计算量化级数 (2^N)
             const quantLevels = Math.pow(2, adcBits);
@@ -1467,23 +1491,51 @@
             const quantMax = quantLevels - 1;
             document.getElementById('quantRange').textContent = `0 ~ ${quantMax}`;
             
-            // 设置量化值输入框的max属性
-            document.getElementById('quantValue').max = quantMax;
+            // 设置输入值范围限制
+            if (fromType === 'quant') {
+                document.getElementById('quantInputValue').min = 0;
+                document.getElementById('quantInputValue').max = quantMax;
+            } else {
+                document.getElementById('quantInputValue').min = '';
+                document.getElementById('quantInputValue').max = '';
+            }
             
-            // 确保量化值在有效范围内
-            if (quantValue < 0) quantValue = 0;
-            if (quantValue > quantMax) quantValue = quantMax;
-            document.getElementById('quantValue').value = quantValue;
+            let result = 0;
+            let resultText = '';
+            let visualizationValue = 0;
             
-            // 计算实际幅值
-            const amplitude = minRange + (maxRange - minRange) * (quantValue / quantMax);
+            // 根据转换方向进行计算
+            if (fromType === 'quant' && toType === 'amplitude') {
+                // 量化值 → 幅值
+                let quantValue = inputValue;
+                if (quantValue < 0) quantValue = 0;
+                if (quantValue > quantLevels) quantValue = quantLevels;
+                result = minRange + (maxRange - minRange) * (quantValue / quantLevels);
+                resultText = `实际幅值: ${result.toFixed(4)}`;
+                visualizationValue = quantValue;
+            } 
+            else if (fromType === 'amplitude' && toType === 'quant') {
+                // 幅值 → 量化值
+                if (maxRange !== minRange) {
+                    result = Math.round((inputValue - minRange) * quantLevels / (maxRange - minRange));
+                    if (result < 0) result = 0;
+                    if (result > quantLevels) result = quantLevels;
+                }
+                resultText = `量化值X: ${result}`;
+                visualizationValue = result;
+            }
+            else if (fromType === toType) {
+                // 相同类型转换，直接显示输入值
+                result = inputValue;
+                resultText = fromType === 'quant' ? `量化值X: ${result}` : `实际幅值: ${result.toFixed(4)}`;
+                visualizationValue = fromType === 'quant' ? result : 0;
+            }
             
             // 显示结果
-            document.getElementById('quantResult').textContent = 
-                `实际幅值: ${amplitude.toFixed(4)}`;
+            document.getElementById('quantResult').textContent = resultText;
                 
             // 更新可视化
-            updateQuantVisualization(quantValue, quantMax);
+            updateQuantVisualization(visualizationValue, quantMax);
         }
         
         // 更新量化可视化
